@@ -1,0 +1,27 @@
+.headerComp {
+  background: blue;
+  padding: 20px 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+}
+
+.appLogo {
+  flex: 1;
+  color: white;
+}
+
+.navLinkContainer {
+  display: flex;
+  gap: 24px;
+  flex: 2;
+  justify-content: flex-end;
+}
+
+.navLinkContainer a {
+  color: white;
+  font-size: 18px;
+  text-decoration: none;
+  cursor: pointer;
+}
