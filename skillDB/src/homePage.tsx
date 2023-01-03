@@ -1,20 +1,8 @@
-import React from 'react';
+import React from "react";
+import { Navigate } from "react-router-dom";
 
-const style = {
-  height: 400,
-  backgroundColor: '#673ab7',
-  color: 'white',
-  padding: 12,
-};
-
-const HomePage = () => (
-  <div style={style}>
-    <h1>Skill Db</h1>
-    <h2>Welcome to the future!</h2>
-    <p>
-      <em>a page being provided by App 1</em>
-    </p>
-  </div>
+const HomePage = ({ redirectLink }) => (
+  <Navigate replace to={redirectLink ?? ""} />
 );
 
 export default HomePage;

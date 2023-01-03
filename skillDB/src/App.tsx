@@ -1,42 +1,45 @@
-import React, { Suspense } from 'react';
-import ReactDOM from 'react-dom';
-import { Routes, Route, BrowserRouter } from 'react-router-dom';
-import Header from './components/Header';
-// import Product from 'app2/Product';
-// import ProductDetail from 'app2/ProductDetail';
-import localRoutes from './routes';
-import remoteRoutes from 'app2/routes';
-import HomePage from './homePage';
-import './index.scss';
-import Navigation from './Navigation';
-const routes = [...localRoutes,...remoteRoutes];
+import React, { Suspense, useEffect, useState } from "react";
+import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
+import Header from "./components/Header";
+import localRoutes from "./routes";
+import remoteRoutes from "app2/routes";
+import ProtectedRoute from "./ProtectedRoute";
+import { checkUserLoggedIn } from "./utils";
+import "./index.scss";
 
-const App = () => (
-  <>
-    <Header appName={'App 1'} />
-    {/* <Navigation/> */}
-    <Suspense fallback={<div>Loading...</div>}>
-      <Routes>
-        {/* <Route path="/" element={<HomePage/>} /> */}
-        {routes.map((route) => (
-          <Route key={route.path} path={route.path} element={route.element} />
-        ))}
-        {/* app routes: This can be changed later */}
-        {/* <Route path="/skill/list" element={<h1>List</h1>} />
-      <Route path="/skill/choose" element={<h1>Choose SKill</h1>} />
-      <Route path="/skill/report" element={<h1>Report</h1>} /> */}
+const routes = [...localRoutes, ...remoteRoutes];
 
-        {/* Temp Routes to check app linking */}
-        {/* <Route path="/product/:id" element={<ProductDetail />} />
-      <Route path="/product" element={<Product />} /> */}
+const App = () => {
+  return (
+    <>
+      <Header appName={"App 1"} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route element={<ProtectedRoute homeRoute={"/skill/list"} />}>
+            {routes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={route.element}
+              />
+            ))}
+          </Route>
 
-        {/* Auth Routes */}
-        {/* <Route path="/auth/login" element={<h1>Login Page</h1>} />
-      <Route path="/auth/register" element={<h1>Register Page</h1>} /> */}
-      </Routes>
-    </Suspense>
-  </>
-);
+          <Route
+            path="/auth/login"
+            element={
+              checkUserLoggedIn() ? (
+                <Navigate to="/" replace />
+              ) : (
+                <h1>Login Page</h1>
+              )
+            }
+          />
+          <Route path="/auth/register" element={<h1>Register Page</h1>} />
+        </Routes>
+      </Suspense>
+    </>
+  );
+};
 
 export default App;
-
