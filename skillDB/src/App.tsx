@@ -4,6 +4,8 @@ import Header from "./components/Header";
 import localRoutes from "./routes";
 import remoteRoutes from "app2/routes";
 import ProtectedRoute from "./ProtectedRoute";
+import Login from "./components/Auth/Login";
+import Register from "./components/Auth/Register";
 import { checkUserLoggedIn } from "./utils";
 import "./index.scss";
 
@@ -31,11 +33,11 @@ const App = () => {
               checkUserLoggedIn() ? (
                 <Navigate to="/" replace />
               ) : (
-                <h1>Login Page</h1>
+                <Login />
               )
             }
           />
-          <Route path="/auth/register" element={<h1>Register Page</h1>} />
+          <Route path="/auth/register" element={<Register/>} />
         </Routes>
       </Suspense>
     </>

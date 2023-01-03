@@ -1,0 +1,47 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "name": "Technical",
+            "createdAt": "2022-12-26T09:28:43.877Z",
+            "updatedAt": "2022-12-26T09:28:43.877Z",
+            "deletedAt": null
+        },
+        {
+            "id": 2,
+            "name": "Business",
+            "createdAt": "2022-12-26T09:31:31.615Z",
+            "updatedAt": "2022-12-26T09:31:31.615Z",
+            "deletedAt": null
+        },
+        {
+            "id": 3,
+            "name": "Mangerial",
+            "createdAt": "2022-12-26T09:28:43.877Z",
+            "updatedAt": "2022-12-26T09:28:43.877Z",
+            "deletedAt": null
+        },
+        {
+            "id": 4,
+            "name": "Retail",
+            "createdAt": "2022-12-26T09:31:31.615Z",
+            "updatedAt": "2022-12-26T09:31:31.615Z",
+            "deletedAt": null
+        },
+        {
+            "id": 5,
+            "name": "BFSI",
+            "createdAt": "2022-12-26T09:28:43.877Z",
+            "updatedAt": "2022-12-26T09:28:43.877Z",
+            "deletedAt": null
+        },
+        {
+            "id": 6,
+            "name": "Communication",
+            "createdAt": "2022-12-26T09:31:31.615Z",
+            "updatedAt": "2022-12-26T09:31:31.615Z",
+            "deletedAt": null
+        }
+    ],
+    "message": "findAll"
+}
