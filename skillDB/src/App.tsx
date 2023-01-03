@@ -1,9 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
+import AddDomain from "./components/AddDomain";
+import AddSkills from "./components/AddSkills";
+import Login from "./components/Auth/Login";
+import Register from "./components/Auth/Register";
 import Header from "./components/Header";
-import Product from "app2/Product";
-import ProductDetail from "app2/ProductDetail";
 
 import "./index.scss";
 
@@ -15,14 +17,13 @@ const App = () => (
       <Route path="/skill/list" element={<h1>List</h1>} />
       <Route path="/skill/choose" element={<h1>Choose SKill</h1>} />
       <Route path="/skill/report" element={<h1>Report</h1>} />
-
-      {/* Temp Routes to check app linking */}
-      <Route path="/product/:id" element={<ProductDetail />} />
-      <Route path="/product" element={<Product />} />
+      <Route path="/add-domain" element={<AddDomain />} />
+      <Route path="/add-skills" element={<AddSkills />} />
+    
 
       {/* Auth Routes */}
-      <Route path="/auth/login" element={<h1>Login Page</h1>} />
-      <Route path="/auth/register" element={<h1>Register Page</h1>} />
+      <Route path="/auth/login" element={<Login />} />
+      <Route path="/auth/register" element={<Register />} />
     </Routes>
   </>
 );
