@@ -7,9 +7,9 @@ const Header = ({ appName }) => {
     <div className={"headerComp"}>
       <h1 className="appLogo">{appName ?? "APP 1"}</h1>
       <div className="navLinkContainer">
-        <Link to="/skill/list"> List </Link>
-        <Link to="/skill/choose"> Choose </Link>
-        <Link to="/skill/report"> Report </Link>
+        <Link to="/"> Home </Link>
+        <Link to="/about"> About </Link>
+        {/* <Link to="/skill/report"> Report </Link> */}
       </div>
     </div>
   );
