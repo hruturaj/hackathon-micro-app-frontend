@@ -51,6 +51,7 @@ module.exports = {
         './Product': './src/components/ProductHome/index.tsx',
         './ProductDetail': './src/components/ProductDetail/index.tsx',
         './routes': './src/routes',
+        './About': './src/aboutPage.tsx',
       },
       shared: {
         ...deps,
