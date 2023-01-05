@@ -6,6 +6,10 @@ const HomePage = React.lazy(() => import("./homePage"));
 const SkillList = React.lazy(() => import("./page/skillList"));
 const AboutPage = React.lazy(()=> import("app2/About"));
 import ErrorBoundary from "./errorBoundary";
+const AddSkills = React.lazy(() => import("./components/AddDomain"))
+const ChooseSkills = React.lazy(() => import("./components/AddSkills"))
+
+
 const routes: Array<Route> = [
   {
     path: "/",
@@ -21,11 +25,11 @@ const routes: Array<Route> = [
   },
   {
     path: "/skill/list/new",
-    element: <>Add new skill</>,
+    element: <AddSkills /> ,
   },
   {
     path: "/skill/choose",
-    element: <>Choose Skill from app 1</>,
+    element: <ChooseSkills />,
   },
   {
     path: "/skill/report",
