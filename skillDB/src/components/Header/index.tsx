@@ -21,7 +21,8 @@ import { Logout } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
-const Header = ({ appName, loggedIn, ...props }) => {
+const Header = ({ appName, ...props }) => {
+  const loggedIn = checkUserLoggedIn();
   const navigate = useNavigate();
   const navItems = !loggedIn
     ? [
