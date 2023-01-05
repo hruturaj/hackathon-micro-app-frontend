@@ -4,6 +4,7 @@ import UsersActions from "../../components/DataTable/components/UsersActions";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import axiosRequest from "../../services/http.service";
+import {exportFile} from '../../utils';
 import "./index.scss";
 
 const SkillList = () => {
@@ -71,6 +72,9 @@ const SkillList = () => {
   return (
     <div className="skillListContainer">
       <div className="buttonContainer">
+        <Button variant="contained" onClick={()=> exportFile(rows)} >
+          Download
+        </Button>
         <Button variant="contained" onClick={handleAdd}>
           Add
         </Button>
