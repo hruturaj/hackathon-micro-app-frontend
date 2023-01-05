@@ -1,20 +1,18 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
 import { Route } from "./models/routes";
 
 const HomePage = React.lazy(() => import("./homePage"));
 const SkillList = React.lazy(() => import("./page/skillList"));
 const AboutPage = React.lazy(()=> import("app2/About"));
 import ErrorBoundary from "./errorBoundary";
-const AddSkills = React.lazy(() => import("./components/AddDomain"))
 const ChooseSkills = React.lazy(() => import("./components/AddSkills"))
-
+const AddDomain = React.lazy(() => import("./components/AddDomain"));
 
 const routes: Array<Route> = [
-  {
-    path: "/",
-    element: <HomePage redirectLink={"/skill/list"} />,
-  },
+  // {
+  //   path: "/",
+  //   element: <HomePage redirectLink={"/skill/list"} />,
+  // },
   {
     path: '/about',
     element:  <ErrorBoundary><AboutPage/></ErrorBoundary>
@@ -25,7 +23,7 @@ const routes: Array<Route> = [
   },
   {
     path: "/skill/list/new",
-    element: <AddSkills /> ,
+    element: <AddDomain />,
   },
   {
     path: "/skill/choose",
