@@ -3,6 +3,7 @@ import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
+import axiosRequest from "../../services/http.service";
 
 import { getAllDomains, getAllSkills } from "../../services/skills-lib";
 import AddDomainFields from "../AddDomainFields";
@@ -23,10 +24,18 @@ function AddDomain() {
   const [alldomains, setalldomains] = useState([]);
   const [allskills, setallskills] = useState(null);
   const [formsCount, setformsCount] = useState(1);
-
+  const [disableAdd, setdisableAdd] = useState(false);
   useEffect(() => {
-    getAllDomains().then((data: any) => {setalldomains(data.data); });
-    getAllSkills().then((data: any) => setallskills(data.data));
+    axiosRequest
+      .get("domain", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res: any) => {
+        console.log(res);
+        setalldomains(res.data.data);
+      });
+    // getAllDomains().then((data: any) => {setalldomains(data.data); });
+    // getAllSkills().then((data: any) => setallskills(data.data));
   }, []);
 
   useEffect(() => {
@@ -36,14 +45,35 @@ function AddDomain() {
   const updateValues = (obj, index) => {
     let v1 = userSelectedDomains;
 
+    console.log("inside update", obj, index);
     v1[index] = obj;
     setuserSelectedDomains(v1);
   };
 
   const submitHandler = (event: any) => {
     event.preventDefault();
-    console.log(userSelectedDomains)
-  }
+    console.log(userSelectedDomains);
+    let arr: any = [];
+    userSelectedDomains.forEach((each) => {
+      return each.skills.forEach((eachSkill) => {
+        let value = {
+          domainMasterId: each.domain.id,
+          name: eachSkill,
+        };
+        arr.push(value);
+      });
+    });
+
+    console.log(arr);
+    axiosRequest
+      .post("skill", arr, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        
+      })
+      .then((res: any) => {
+        console.log(res);
+      });
+  };
 
   return (
     <div>
@@ -59,18 +89,18 @@ function AddDomain() {
         <form style={{ textAlign: "center" }} onSubmit={submitHandler}>
           <div style={{ paddingBottom: "15px" }}>
             {alldomains &&
-              allskills &&
+              // allskills &&
               [...Array(formsCount)].map((e, i) => (
                 <AddDomainFields
                   index={i}
                   allSelectedDomains={userSelectedDomains}
                   updateFn={updateValues}
-                  skillSet={allskills}
+                  // skillSet={allskills}
                   domainSet={alldomains.map((domain: any) => {
                     let obj = {
                       id: domain.id,
-                      name: domain.name
-                    }
+                      name: domain.name,
+                    };
 
                     return obj;
                   })}
@@ -80,7 +110,7 @@ function AddDomain() {
           <Button
             disabled={formsCount === alldomains.length}
             variant="contained"
-            style={{marginRight: '15px'}}
+            style={{ marginRight: "15px" }}
             onClick={() => setformsCount(formsCount + 1)}
           >
             ADD

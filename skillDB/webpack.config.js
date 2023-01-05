@@ -44,8 +44,8 @@ module.exports = {
       name: 'skillDB',
       filename: 'remoteEntry.js',
       remotes: {
-        // home: 'skillDB@http://localhost:8082/remoteEntry.js',
-        app2: 'skillList@http://localhost:8081/remoteEntry.js',
+        home: 'skillDB@http://localhost:8082/remoteEntry.js',
+        // app2: 'skillList@http://localhost:8082/remoteEntry.js',
       },
       exposes: {
         './Header': './src/components/Header/index.tsx',

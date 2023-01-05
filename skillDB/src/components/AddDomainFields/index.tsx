@@ -3,118 +3,186 @@ import Chip from "@mui/material/Chip";
 import ListItem from "@mui/material/ListItem";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
+import axiosRequest from "../../services/http.service";
 
-function AddDomainFields({index, updateFn, skillSet, domainSet, allSelectedDomains}) {
-//   const domainSet = [];
-//   const skillSet = []
-// const results = domainSet.filter(({ value: id1 }) => !allSelectedDomains.some(({ value: id2 }) => id2 === id1));
-// console.log('difference---------------------',results)
+function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
+  //   const domainSet = [];
+  //   const skillSet = []
+  // const results = domainSet.filter(({ value: id1 }) => !allSelectedDomains.some(({ value: id2 }) => id2 === id1));
+  // console.log('difference---------------------',results)
 
-const [selectedDomain, setselectedDomain] = useState<any>()
-const [selectedskills, setselectedskills] = useState<any>([])
+  const [selectedDomain, setselectedDomain] = useState<any>(null);
+  const [selectedskills, setselectedskills] = useState<any>([]);
+  const [skillName, setskillName] = useState<any>("");
 
-useEffect(() => {
+  const [errorValues, seterrorValues] = useState({
+    domainError: "",
+    skillsError: "",
+  });
 
-  // console.log("working******")
+  // const [formData, setformData] = useState({initialState})
 
-  if(selectedDomain==null){
-    return
-  }
-  // console.log("working here******")
-  let obj = {
-    domain: {id: selectedDomain.id, name: selectedDomain.name},
-    skills: selectedskills.map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
-  }
-  console.log("******",obj,index)
-  updateFn(obj,index)
+  useEffect(() => {
+    if (selectedDomain == null) {
+      return;
+    }
+    // console.log("working here******")
+    let obj = {
+      domain: { id: selectedDomain.id, name: selectedDomain.name },
+      skills: selectedskills,
+      // .map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
+    };
+    console.log("useeffect working******", selectedskills);
+    // console.log("******",obj,index)
+    updateFn(obj, index);
 
-  console.log('&&&&&&&&&&&&&&&&&&&&&&',allSelectedDomains);
+    console.log("&&&&&&&&&&&&&&&&&&&&&&", allSelectedDomains);
+  }, [selectedDomain, selectedskills]);
 
-  // A comparer used to determine if two entries are equal.
-// const isSameUser = (a, b) => a.id === b.id && a.name === b.name;
+  // const filterSkillset = () => {
+  //   if(selectedDomain) {
+  //     const newskillarray = skillSet.filter((val: any) => {
+  //       return val.domainMasterId === selectedDomain.id
+  //     })
+  //     return newskillarray
+  //   } else {
+  //     return []
+  //   }
+  // }
 
-// Get items that only occur in the left array,
-// using the compareFunction to determine equality.
-// const onlyInLeft = (left, right, compareFunction) => 
-//   left.filter(leftValue =>
-//     !right.some(rightValue => 
-//       compareFunction(leftValue, rightValue)));
+  const handleChange = (event: any, value?: any, reason?: any) => {
+    //console.log("name==>",event.target.id,event.target.id.includes("domain-field"))
+    let obj = {};
 
-// const onlyInA = onlyInLeft(domainSet, allSelectedDomains.map(all => all.domain), isSameUser);
-// const onlyInB = onlyInLeft(allSelectedDomains.map(all => all.domain), domainSet, isSameUser);
+    console.log("values outside", value, reason);
+    if (reason === "clear") {
+      setselectedDomain({ id: -1, name: "" });
+    } else if (event.target.id.includes("domain-field")) {
+      console.log("values", event, value);
+      setselectedDomain(value);
 
-// const result = [...onlyInA, ...onlyInB];
-//   let difference = domainSet.filter(x => (
-//     !allSelectedDomains.includes(x.name))
-//     );
+      // obj = {
+      //   domain: {id: value.id, name: value.name},
+      //   skills: selectedskills.map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
+      // }
+    } else {
+      // obj = {
+      //   domain: {id: selectedDomain.id, name: selectedDomain.name},
+      //   skills: value.map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
+      // }
+      seterrorValues({
+        ...errorValues,
+        skillsError: "",
+      });
 
-}, [selectedDomain,selectedskills])
+      console.log(event.target.value);
+      setskillName(event.target.value);
+      if (event.target.value.length > 0) {
+        console.log("inside iffff", event.target.value);
+        axiosRequest
+          .get(
+            "skill/search/" +
+              selectedDomain.id +
+              "?search=" +
+              event.target.value,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          )
+          .then((response: any) => {
+            if (response.data.data) {
+              console.log("pass", response.data.data);
+              seterrorValues({
+                ...errorValues,
+                skillsError: "Skill exists",
+              });
+            } else {
+              console.log("fail", response.message);
+              seterrorValues({
+                ...errorValues,
+                skillsError: "",
+              });
+            }
+            // skillSet.push(...response.data.data);
+          });
+      }
+      // axiosRequest('')
+      // autocomplete setskills
+      // setselectedskills(value)
+    }
 
+    // console.log("object: ",obj)
+    // updateFn(obj,index)
+  };
 
-const filterSkillset = () => {
-  if(selectedDomain) {
-    const newskillarray = skillSet.filter((val: any) => {
-      return val.domainMasterId === selectedDomain.id
-    })
-    return newskillarray
-  } else {
-    return []
-  }
-}
+  // const handleAdd = () => {
+  //   const newList = selectedskills.concat({ name })
+  // }
 
+  const handleKeyDown = (event: any) => {
+    if (event.key === "Enter") {
+      console.log("do validate", event.target.value);
+      if (errorValues.skillsError == "") {
+        const newList = selectedskills.concat(event.target.value);
+        setselectedskills(newList);
+        setskillName("");
+      }
+    }
+  };
 
-const handleChange = (event: any, value?: any) => {
-  //console.log("name==>",event.target.id,event.target.id.includes("domain-field"))
-  let obj = {}
-  if(event.target.id.includes("domain-field")){
-    console.log("values",value)
-    setselectedDomain(value)
+  const handleDelete = (chipToDelete: any) => () => {
+    // setselectedskills((chips) =>
+    //   chips.filter((chip) => chip !== chipToDelete)
+    // );
 
-    // obj = {
-    //   domain: {id: value.id, name: value.name},
-    //   skills: selectedskills.map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
-    // }
-    
+    const arr1 = [...selectedskills];
+    console.log(
+      "handle delete",
+      chipToDelete,
+      arr1,
+      selectedskills.indexOf(chipToDelete)
+    );
+    arr1.splice(selectedskills.indexOf(chipToDelete), 1);
+    console.log("after slice", arr1);
 
-  }else{
-    // obj = {
-    //   domain: {id: selectedDomain.id, name: selectedDomain.name},
-    //   skills: value.map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
-    // }
-    console.log(event.target.value)
-    // axiosRequest('')
-    // autocomplete setskills
-    setselectedskills(value)
-  }
-
-  // console.log("object: ",obj)
-  // updateFn(obj,index)
- 
-}
-
-const handleKeyDown = (event: any) => {
-  if (event.key === 'Enter') {
-    console.log('do validate', event.target.value)
-    // setselectedskills(event.target.value)
-  }
-}
-
-const handleDelete = (chipToDelete: any) => () => {
-  setselectedskills((chips) => chips.filter((chip) => chip.key !== chipToDelete.key));
-};
+    setselectedskills(arr1);
+  };
 
   return (
-    <div style={{display: 'flex', justifyContent: 'space-evenly', paddingBottom: '15px'}}>
-      {console.log("domain",selectedDomain)}
-      {console.log("skillset",selectedskills)}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        paddingBottom: "15px",
+      }}
+    >
+      {console.log("heloooooooooo", selectedDomain)}
       <Autocomplete
         id="domain-field"
         options={domainSet}
-        onChange={(e,v) => {handleChange(e, v)}}
-        sx={{ width: 400 }}
-        disableClearable
+        onChange={(e, v, reason) => {
+          handleChange(e, v, reason);
+        }}
+        sx={{ width: 400, marginRight: "25px" }}
+        getOptionDisabled={(option: any) => {
+          // console.log(option);
+          const valDomains = allSelectedDomains.map((val) => val.domain.name);
+          // console.log('disabled option',valDomains, valDomains.indexOf(option.name) !== -1, option.name)
+          return valDomains.indexOf(option.name) !== -1;
+          // return allSelectedDomains.map(val => val.domain).filter(value => value.id !== option.id);
+        }}
         getOptionLabel={(option: any) => option.name}
-        renderInput={(params) => <TextField {...params} label="Domain" />}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            placeholder="Domain"
+            label="Domain"
+            error={errorValues.domainError.length > 0}
+            helperText={errorValues.domainError}
+          />
+        )}
       />
 
       {/* <Autocomplete
@@ -130,20 +198,38 @@ const handleDelete = (chipToDelete: any) => () => {
         )}
       /> */}
 
-      <TextField id="outlined-basic" sx={{ width: 400 }} label="Skills" onChange={handleChange} variant="outlined" onKeyDown={handleKeyDown} />
-      {selectedskills.length > 0 && selectedskills.map((data) => {
-        let icon;
+      <div>
+        {console.log("^^^^^", errorValues.skillsError.length > 0, errorValues)}
+        <TextField
+          id="outlined-basic"
+          sx={{ width: 400 }}
+          label="Skills"
+          onChange={handleChange}
+          variant="outlined"
+          onKeyDown={handleKeyDown}
+          value={skillName}
+          error={errorValues.skillsError.length > 0 && skillName !== ""}
+          helperText={skillName == "" ? "" : errorValues.skillsError}
+        />
 
-        return (
-          <ListItem>
-            <Chip
-              icon={icon}
-              label={data}
-              onDelete={handleDelete(data)}
-            />
-          </ListItem>
-        );
-      })}
+        <div>
+          {console.log("selected skills", selectedskills)}
+          {selectedskills.length > 0 &&
+            selectedskills.map((data) => {
+              let icon;
+
+              return (
+                <ListItem>
+                  <Chip
+                    icon={icon}
+                    label={data}
+                    onDelete={handleDelete(data)}
+                  />
+                </ListItem>
+              );
+            })}
+        </div>
+      </div>
     </div>
   );
 }
