@@ -10,49 +10,42 @@ import AddDomainFields from "../AddDomainFields";
 
 // form to add domain and their corresponding skills
 function AddDomain() {
-  const initialValues: {
-    domain: { id: number; name: string };
-    skills: { id: number; name: string; domainMasterId: number }[];
-  } = {
-    domain: { id: -1, name: "" },
-    skills: [{ id: -1, name: "", domainMasterId: -1 }],
-  };
-
-  const [userSelectedDomains, setuserSelectedDomains] = useState([
-    initialValues,
-  ]);
+  const [userSelectedDomains, setuserSelectedDomains] = useState([]);
   const [alldomains, setalldomains] = useState([]);
-  const [allskills, setallskills] = useState(null);
+  const [currentSkills, setCurrentSkill] = useState([]);
   const [formsCount, setformsCount] = useState(1);
-  const [disableAdd, setdisableAdd] = useState(false);
+  const [formErrors, setFormErrors] = useState({
+    domainError: "",
+    skillsError: "",
+  });
+
   useEffect(() => {
     axiosRequest
       .get("domain", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res: any) => {
-        console.log(res);
         setalldomains(res.data.data);
       });
-    // getAllDomains().then((data: any) => {setalldomains(data.data); });
-    // getAllSkills().then((data: any) => setallskills(data.data));
   }, []);
 
-  useEffect(() => {
-    console.log("====>", userSelectedDomains);
-  }, [userSelectedDomains]);
+  useEffect(() => {}, [userSelectedDomains]);
 
-  const updateValues = (obj, index) => {
+  const updateValues = (obj: any, index: number) => {
     let v1 = userSelectedDomains;
-
-    console.log("inside update", obj, index);
-    v1[index] = obj;
+    v1.splice(index, 1, obj);
     setuserSelectedDomains(v1);
   };
 
   const submitHandler = (event: any) => {
     event.preventDefault();
-    console.log(userSelectedDomains);
+    if (
+      formErrors?.domainError?.trim()?.length > 0 ||
+      formErrors?.domainError?.trim()?.length > 0 ||
+      userSelectedDomains.length === 0
+    ) {
+      return;
+    }
     let arr: any = [];
     userSelectedDomains.forEach((each) => {
       return each.skills.forEach((eachSkill) => {
@@ -66,10 +59,13 @@ function AddDomain() {
 
     console.log(arr);
     axiosRequest
-      .post("skill", arr, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        
-      })
+      .post(
+        "skill",
+        { data: arr },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      )
       .then((res: any) => {
         console.log(res);
       });
@@ -77,15 +73,15 @@ function AddDomain() {
 
   return (
     <div>
-      <h2 style={{ textAlign: "center", display: "block" }}>Problem St1</h2>
+      <h2 style={{ textAlign: "center", display: "block" }}>
+        Add Your Domain & Skills
+      </h2>
       <div
         style={{
           justifyContent: "center",
           padding: "50px 0 100px 0",
         }}
       >
-        {console.log("====>", userSelectedDomains)}
-
         <form style={{ textAlign: "center" }} onSubmit={submitHandler}>
           <div style={{ paddingBottom: "15px" }}>
             {alldomains &&
@@ -96,6 +92,8 @@ function AddDomain() {
                   allSelectedDomains={userSelectedDomains}
                   updateFn={updateValues}
                   // skillSet={allskills}
+                  setCurrentSkill={setCurrentSkill}
+                  setFormErrors={setFormErrors}
                   domainSet={alldomains.map((domain: any) => {
                     let obj = {
                       id: domain.id,
@@ -107,17 +105,35 @@ function AddDomain() {
                 />
               ))}
           </div>
-          <Button
-            disabled={formsCount === alldomains.length}
-            variant="contained"
-            style={{ marginRight: "15px" }}
-            onClick={() => setformsCount(formsCount + 1)}
+          <div
+            style={{ display: "flex", columnGap: 20, justifyContent: "center" }}
           >
-            ADD
-          </Button>
-          <Button type="submit" variant="contained">
-            Submit
-          </Button>
+            <Button
+              disabled={
+                formsCount === alldomains.length ||
+                userSelectedDomains[formsCount - 1] === undefined ||
+                currentSkills?.length === 0
+              }
+              variant="contained"
+              style={{ width: 120 }}
+              onClick={() => setformsCount(formsCount + 1)}
+            >
+              Add New
+            </Button>
+            <Button
+              style={{ width: 120 }}
+              type="submit"
+              variant="contained"
+              disabled={
+                formErrors?.domainError?.trim()?.length > 0 ||
+                formErrors?.domainError?.trim()?.length > 0 ||
+                userSelectedDomains.length === 0 ||
+                currentSkills?.length === 0
+              }
+            >
+              Submit
+            </Button>
+          </div>
         </form>
       </div>
     </div>
