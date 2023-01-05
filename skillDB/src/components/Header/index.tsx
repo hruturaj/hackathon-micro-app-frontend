@@ -14,14 +14,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "./header.scss";
 import { checkUserLoggedIn } from "../../utils";
+import { Logout } from "@mui/icons-material";
 
 const drawerWidth = 240;
 
-const Header = ({ appName, ...props }) => {
-  const loggedIn = checkUserLoggedIn();
+const Header = ({ appName, loggedIn, ...props }) => {
+  const navigate = useNavigate();
   const navItems = !loggedIn
     ? [
         // { name: "Login", route: "/auth/login" },
@@ -32,6 +33,7 @@ const Header = ({ appName, ...props }) => {
         { name: "About", route: "/about" },
         { name: "Choose", route: "/skill/choose" },
         { name: "Report", route: "/skill/report" },
+        { name: "Logout", route: "/auth/login" },
       ];
 
   const { window } = props;
@@ -99,19 +101,36 @@ const Header = ({ appName, ...props }) => {
             {appName}
           </Typography>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            {navItems.map((item) => (
-              <Button key={item?.name} sx={{ color: "#fff" }}>
-                <NavLink
-                  className={(navData) =>
-                    navData.isActive ? "activeLink" : "inActiveLink"
-                  }
-                  to={item?.route}
-                  style={{ textDecoration: "none" }}
-                >
-                  {item?.name}
-                </NavLink>
-              </Button>
-            ))}
+            {navItems.map((item) => {
+              if (item?.name === "Logout") {
+                return (
+                  <Button
+                    key={item?.name}
+                    sx={{ color: "#fff" }}
+                    onClick={() => {
+                      localStorage.removeItem("token");
+                      navigate("/auth/login");
+                    }}
+                  >
+                    <Logout />
+                  </Button>
+                );
+              } else {
+                return (
+                  <Button key={item?.name} sx={{ color: "#fff" }}>
+                    <NavLink
+                      className={(navData) =>
+                        navData.isActive ? "activeLink" : "inActiveLink"
+                      }
+                      to={item?.route}
+                      style={{ textDecoration: "none" }}
+                    >
+                      {item?.name}
+                    </NavLink>
+                  </Button>
+                );
+              }
+            })}
           </Box>
         </Toolbar>
       </AppBar>

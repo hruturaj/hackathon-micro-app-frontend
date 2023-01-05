@@ -87,22 +87,18 @@ function Login() {
     event.preventDefault();
     // setLoginErrors(validateForm(loginForm));
     setFormSubmit(true);
-    console.log(loginForm);
     setLoading(true);
     const response: any = axiosRequest
       .post("login", loginForm)
       .then((response) => {
         if (response.status === 200) {
-          setLoading(true);
-
-          console.log(response);
-          localStorage.setItem("token", response.data.data.token);
-          navigate("/add-skills");
-        } else {
-          setLoading(true);
+          localStorage.setItem("token", response?.data?.data?.token);
+          navigate("/");
         }
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    console.log(response);
   };
 
   return (

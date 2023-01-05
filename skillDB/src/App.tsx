@@ -12,12 +12,24 @@ import "./index.scss";
 const routes = [...localRoutes, ...remoteRoutes];
 
 const App = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(checkUserLoggedIn());
+  }, []);
+
   return (
     <>
-      <Header appName={"App 1"} />
+      <Header appName={"App 1"} loggedIn={loggedIn} />
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
-          <Route element={<ProtectedRoute homeRoute={"/skill/list"} />}>
+          <Route element={<ProtectedRoute loggedIn={loggedIn} />}>
+            <Route
+              key={"home"}
+              path={"/"}
+              element={<Navigate to="/skill/list" />}
+            />
+
             {routes.map((route) => (
               <Route
                 key={route.path}
@@ -30,14 +42,15 @@ const App = () => {
           <Route
             path="/auth/login"
             element={
-              checkUserLoggedIn() ? (
-                <Navigate to="/" replace />
-              ) : (
-                <Login />
-              )
+              checkUserLoggedIn() ? <Navigate to="/" replace /> : <Login />
             }
           />
-          <Route path="/auth/register" element={<Register/>} />
+          <Route
+            path="/auth/register"
+            element={
+              checkUserLoggedIn() ? <Navigate to="/" replace /> : <Register />
+            }
+          />
         </Routes>
       </Suspense>
     </>

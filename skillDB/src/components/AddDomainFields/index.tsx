@@ -75,9 +75,8 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
         skillsError: "",
       });
 
-      console.log(event.target.value);
       setskillName(event.target.value);
-      if (event.target.value.length > 0) {
+      if (event?.target?.value?.length > 0) {
         console.log("inside iffff", event.target.value);
         axiosRequest
           .get(
@@ -158,10 +157,10 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
         paddingBottom: "15px",
       }}
     >
-      {console.log("heloooooooooo", selectedDomain)}
       <Autocomplete
         id="domain-field"
         options={domainSet}
+        size="small"
         onChange={(e, v, reason) => {
           handleChange(e, v, reason);
         }}
@@ -198,8 +197,7 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
         )}
       /> */}
 
-      <div>
-        {console.log("^^^^^", errorValues.skillsError.length > 0, errorValues)}
+      {/* <div>
         <TextField
           id="outlined-basic"
           sx={{ width: 400 }}
@@ -213,7 +211,6 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
         />
 
         <div>
-          {console.log("selected skills", selectedskills)}
           {selectedskills.length > 0 &&
             selectedskills.map((data) => {
               let icon;
@@ -229,7 +226,46 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
               );
             })}
         </div>
-      </div>
+      </div> */}
+
+      <Autocomplete
+        multiple
+        key={`skills-${index}`}
+        id={`skills-${index}`}
+        options={[]}
+        freeSolo
+        size="small"
+        sx={{ width: 400 }}
+        onChange={(e, v, reason) => {
+          console.log("onchange", e, v, reason);
+          handleChange(e, v, reason);
+        }}
+        // renderTags={(value: readonly string[], getTagProps) =>
+        //   value.map((option: string, index: number) => (
+        //     <Chip
+        //       variant="outlined"
+        //       label={option}
+        //       size="small"
+        //       // color={errorValues.skillsError?.length > 0 ? "error" : "default"}
+        //       {...getTagProps({ index })}
+        //     />
+        //   ))
+        // }
+        onKeyDown={(event: any) => {
+          if (event.key === "Enter") {
+            event.defaultMuiPrevented = errorValues.skillsError.length > 0;
+          }
+        }}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="outlined"
+            label="Add Skills"
+            error={errorValues.skillsError.length > 0 && skillName !== ""}
+            helperText={skillName == "" ? "" : errorValues.skillsError}
+          />
+        )}
+      />
     </div>
   );
 }

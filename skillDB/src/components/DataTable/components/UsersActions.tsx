@@ -1,9 +1,9 @@
 import { Box, CircularProgress, Fab } from "@mui/material";
 import { green } from "@mui/material/colors";
 import { Delete, Save } from "@mui/icons-material";
-import React, { useEffect, useState } from "react";
-import { dataRequest } from "../../../utils";
+import React, { useState } from "react";
 import EditModal from "./EditModal";
+import axiosRequest from "../../../services/http.service";
 
 const UsersActions = ({ params, rowId, setRowId, setRows, setLoading }) => {
   const [deleteloading, setDeleteLoading] = useState(false);
@@ -11,19 +11,24 @@ const UsersActions = ({ params, rowId, setRowId, setRows, setLoading }) => {
   // const [success, setSuccess] = useState(false);
 
   const handleUpdate = async () => {
-    // setLoading(true);
-    // const { role, active, _id } = params.row;
-    console.log(params);
     setEditModalVisible(true);
   };
 
   const handleDelete = async () => {
     setDeleteLoading(true);
-    dataRequest(`/skill/${params.id}`, { method: "DELETE" })
+    axiosRequest
+      .delete(`/skill/${params.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
       .then((res) => {
         if (res?.status < 400) {
           setLoading(true);
-          dataRequest("/skill", { method: "GET" })
+          axiosRequest
+            .get("/skill", {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            })
             .then((res) => {
               if (res?.status < 400) {
                 setRows(res?.data?.data);
