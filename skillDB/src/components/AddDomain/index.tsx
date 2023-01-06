@@ -1,19 +1,21 @@
+import { IconButton } from "@mui/material";
 import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import axiosRequest from "../../services/http.service";
-
+import { useSnackbar } from "notistack";
 import { getAllDomains, getAllSkills } from "../../services/skills-lib";
 import AddDomainFields from "../AddDomainFields";
+import CloseIcon from "@mui/icons-material/Close";
+import { useNavigate } from "react-router-dom";
 
 // form to add domain and their corresponding skills
 function AddDomain() {
-  const [userSelectedDomains, setuserSelectedDomains] = useState([]);
-  const [alldomains, setalldomains] = useState([]);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+  const [userSelectedDomains, setUserSelectedDomains] = useState([]);
+  const [alldomains, setAlldomains] = useState([]);
   const [currentSkills, setCurrentSkill] = useState([]);
-  const [formsCount, setformsCount] = useState(1);
+  const [formsCount, setFormsCount] = useState(1);
   const [formErrors, setFormErrors] = useState({
     domainError: "",
     skillsError: "",
@@ -25,7 +27,7 @@ function AddDomain() {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res: any) => {
-        setalldomains(res.data.data);
+        setAlldomains(res.data.data);
       });
   }, []);
 
@@ -34,7 +36,7 @@ function AddDomain() {
   const updateValues = (obj: any, index: number) => {
     let v1 = userSelectedDomains;
     v1.splice(index, 1, obj);
-    setuserSelectedDomains(v1);
+    setUserSelectedDomains(v1);
   };
 
   const submitHandler = (event: any) => {
@@ -68,6 +70,22 @@ function AddDomain() {
       )
       .then((res: any) => {
         console.log(res);
+        enqueueSnackbar("Data Added Successfully !", {
+          autoHideDuration: 2000,
+          key: "addSkillRecord",
+          variant: "success",
+          action: (key) => (
+            <IconButton
+              onClick={() => closeSnackbar(key)}
+              sx={{
+                color: "white",
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
+        navigate("/skill/list");
       });
   };
 
@@ -116,7 +134,7 @@ function AddDomain() {
               }
               variant="contained"
               style={{ width: 120 }}
-              onClick={() => setformsCount(formsCount + 1)}
+              onClick={() => setFormsCount(formsCount + 1)}
             >
               Add New
             </Button>

@@ -1,14 +1,16 @@
-import { Box, CircularProgress, Fab } from "@mui/material";
+import { Box, CircularProgress, Fab, IconButton } from "@mui/material";
 import { green } from "@mui/material/colors";
 import { Delete, Save } from "@mui/icons-material";
 import React, { useState } from "react";
-import EditModal from "./EditModal";
 import axiosRequest from "../../../services/http.service";
+import EditModal from "./EditModal";
+import { useSnackbar } from "notistack";
+import CloseIcon from "@mui/icons-material/Close";
 
 const UsersActions = ({ params, rowId, setRowId, setRows, setLoading }) => {
   const [deleteloading, setDeleteLoading] = useState(false);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  // const [success, setSuccess] = useState(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const handleUpdate = async () => {
     setEditModalVisible(true);
@@ -40,18 +42,37 @@ const UsersActions = ({ params, rowId, setRowId, setRows, setLoading }) => {
         }
       })
       .finally(() => {
+        enqueueSnackbar("Record Deleted Successfully !", {
+          autoHideDuration: 2000,
+          key: "deleteRecord",
+          variant: "success",
+          action: (key) => (
+            <IconButton
+              onClick={() => closeSnackbar(key)}
+              sx={{
+                color: "white",
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+        });
         setDeleteLoading(false);
       });
   };
 
   return (
     <>
-      <EditModal
-        key={params.id}
-        visible={editModalVisible}
-        setVisible={setEditModalVisible}
-        rowId={params.id}
-      />
+      {editModalVisible === true && (
+        <EditModal
+          key={params.id}
+          visible={editModalVisible}
+          setVisible={setEditModalVisible}
+          params={params}
+          setTableData={setRows}
+          tableLoading={setLoading}
+        />
+      )}
       <Box
         sx={{
           m: 1,

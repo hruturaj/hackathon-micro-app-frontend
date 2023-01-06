@@ -1,6 +1,4 @@
 import Autocomplete from "@mui/material/Autocomplete";
-import Chip from "@mui/material/Chip";
-import ListItem from "@mui/material/ListItem";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import axiosRequest from "../../services/http.service";
@@ -75,7 +73,7 @@ function AddDomainFields({
             }
           )
           .then((response: any) => {
-            if (response.data?.data) {
+            if (response.data?.exist) {
               seterrorValues({
                 ...errorValues,
                 skillsError: "Skill exists",
