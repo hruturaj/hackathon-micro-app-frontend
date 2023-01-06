@@ -152,7 +152,7 @@ const EditModal = ({
         open={visible}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          <b>Edit</b>
+          <b>Update Domain & Skill</b>
           <IconButton
             aria-label="close"
             onClick={handleClose}
