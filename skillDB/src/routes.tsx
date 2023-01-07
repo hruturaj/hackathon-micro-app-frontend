@@ -5,7 +5,7 @@ const HomePage = React.lazy(() => import("./homePage"));
 const SkillList = React.lazy(() => import("./page/skillList"));
 const AboutPage = React.lazy(()=> import("app2/About"));
 import ErrorBoundary from "./errorBoundary";
-const ChooseSkills = React.lazy(() => import("./components/AddSkills"))
+const ChooseSkills = React.lazy(() => import("./components/AddSkillsParent"))
 const AddDomain = React.lazy(() => import("./components/AddDomain"));
 
 const routes: Array<Route> = [
