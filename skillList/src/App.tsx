@@ -1,28 +1,43 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Routes, Route, BrowserRouter, Link } from 'react-router-dom';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import "./index.css";
+import localRoutes from "./routes";
+import { checkUserLoggedIn } from "./utils";
+import ProtectedRoute from "./ProtectedRoute";
+import remoteRoutes from "app1/routes";
+const Header = React.lazy(() => import("app1/Header"));
+const Login = React.lazy(() => import("app1/Login"));
+const Register = React.lazy(() => import("app1/Register"));
 
-import './index.css';
-import ProductHome from './components/ProductHome';
-import ProductDetail from './components/ProductDetail';
-import localRoutes from './routes';
-import remoteRoutes from 'app1/routes';
-const Header = React.lazy(() => import('app1/Header'));
-
-const routes = [...localRoutes,...remoteRoutes];
+const routes = [...localRoutes, ...remoteRoutes];
 const App = () => (
   <>
+    <Header appName={"Choose Skill"} />
     <React.Suspense fallback={<h1>Loading</h1>}>
-    <Header appName={"App 2"} />
-    <Routes>
-      {/* <Route path="/" element={<h1>List</h1>} /> */}
-      {routes.map((route) => (
-        <Route key={route.path} path={route.path} element={route.element} />
-      ))}
-      {/* <Route index ></Route> */}
-      {/* <Route path="/product" element={<ProductHome />} />
-      <Route path="/product/:id" element={<ProductDetail />} /> */}
-    </Routes>
+      <Routes>
+        <Route
+          path="/auth/login"
+          element={
+            checkUserLoggedIn() ? <Navigate to="/" replace /> : <Login />
+          }
+        />
+        <Route
+          path="/auth/register"
+          element={
+            checkUserLoggedIn() ? <Navigate to="/" replace /> : <Register />
+          }
+        />
+        <Route element={<ProtectedRoute />}>
+          <Route
+            key={"home"}
+            path={"/"}
+            element={<Navigate to="/skill/list" />}
+          />
+          {routes.map((route) => (
+            <Route key={route.path} path={route.path} element={route.element} />
+          ))}
+        </Route>
+      </Routes>
     </React.Suspense>
   </>
 );
