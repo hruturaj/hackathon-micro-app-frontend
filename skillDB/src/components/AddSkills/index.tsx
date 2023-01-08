@@ -1,7 +1,6 @@
 import Autocomplete from "@mui/material/Autocomplete";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
+import '../AddSkills/addskills.scss'
+import CancelIcon from '@mui/icons-material/Cancel';
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import axiosRequest from "../../services/http.service";
@@ -18,17 +17,17 @@ const skillLevel = ["Basic", "Intermediate", "Expert"];
 //   { name: "LeaderShip", id: "2" },
 //   { name: "Business", id: "3" },
 // ];
-function AddSkills() {
-  const domainSet: any = [];
-  const skillSet: any = [];
+function AddSkills({domainSet, skillSet, updateFn, index, userSelectedValues}) {
+  // const domainSet: any = [];
+  const allSkills: any = [];
   const initialValues: {
-    domain: { name: string; id: string };
-    skills: { name: string; id: string }[];
+    domain: { name: string; id: number };
+    skills: { name: string; id: number, domainMasterId: number };
     level: string;
     experience: number;
   } = {
-    domain: { name: "", id: "" },
-    skills: [],
+    domain: { name: "", id: -1 },
+    skills: { name: "", id: -1, domainMasterId: -1 },
     level: "",
     experience: 0,
   };
@@ -40,26 +39,12 @@ function AddSkills() {
     level: "",
     experience: "",
   });
+  const [skillsSet, setskillsSet] = useState([])
 
   useEffect(() => {
-    axiosRequest
-      .get("domain", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((response: any) => {
-        // console.log(response.data.data)
-        domainSet.push(...response.data.data);
-        console.log(domainSet);
-      });
-    // axiosRequest.get("skill", { headers: {"Authorization" : `Bearer ${localStorage.getItem('token')}`} }).then((response: any) => {
-    //     // console.log(response.data.data)
-    //       skillSet.push(...response.data.data);
-    //   console.log(skillSet)
-
-    // });
-
-    // console.log(domainSet, skillSet)
-  }, []);
+    console.log('useeffect add skills child',skillForm, index)
+    updateFn(skillForm, index);
+  }, [skillForm]);
 
   const handleChange = (event: any) => {
     const { name, value } = event.target;
@@ -67,8 +52,11 @@ function AddSkills() {
     validateForm(name, value);
     setSkillForm((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: name === 'experience' ? +value : value,
     }));
+    // allSkills.filter(val => {
+    //   val.domainMasterId === 
+    // })
   };
 
   const submitSkillsForm = (event: any) => {
@@ -130,35 +118,46 @@ function AddSkills() {
     return;
   };
 
-  return (
-    // <Grid
-    //   container
-    //   spacing={0}
-    //   direction="column"
-    //   alignItems="center"
-    //   justifyContent="center"
-    //   style={{ minHeight: "100vh" }}
-    // >
+  const filterSkillset = () => {
+    console.log(skillForm.domain);
+    if(skillForm.domain) {
+      const newskillarray = skillSet.filter((val: any) => {
+        return val.domainMasterId === skillForm.domain.id
+      })
+      return newskillarray
+    } else {
+      return []
+    }
+  }
 
-    <div>
-      <h2 style={{ textAlign: "center" }}>Add Skills</h2>
-      <div
-        style={{
-          // display: "flex",
+  const deleteSkillRow = () => {
+    updateFn(skillForm, index, true)
+  }
+
+  return (
+      <div className="main-form" style={index === 0? {
+        right: '17px',
+        position: 'relative'
+      } : {}}>
+        {/* <form onSubmit={submitSkillsForm} style={{
+          display: "flex",
           justifyContent: "center",
-          padding: "50px 0 100px 0",
-        }}
-      >
-        <form onSubmit={submitSkillsForm}>
+          gap: '10px',
+          marginBottom: '10px'
+        }}> */}
           <Autocomplete
             id="combo-box-demo"
             options={domainSet}
-            sx={{ width: 400 }}
-            onChange={(event: any, newVal: any) => {
-              setSkillForm((prevState) => ({
-                ...prevState,
-                domain: newVal,
-              }));
+            sx={{ width: 250 }}
+            onChange={(event: any, newVal: any, reason: any) => {
+              if(reason === 'clear'){
+                setSkillForm(initialValues);
+              } else {
+                setSkillForm((prevState) => ({
+                  ...prevState,
+                  domain: newVal,
+                }));
+              }
             }}
             value={skillForm.domain}
             getOptionLabel={(option) => option.name}
@@ -178,15 +177,29 @@ function AddSkills() {
           />
 
           <Autocomplete
-            sx={{ width: 400 }}
-            multiple
-            options={skillSet}
-            onChange={(event: any, newVal: any) => {
+            sx={{ width: 250 }}
+            options={filterSkillset()}
+            onChange={(event: any, newVal: any, reason: any) => {
+              if(reason === 'clear'){
+                setSkillForm({
+                  ...skillForm,
+                  skills: initialValues.skills
+                });
+              } else {
               setSkillForm({
                 ...skillForm,
                 skills: newVal,
               });
+            }
             }}
+            getOptionDisabled={(option: any) => {
+              // console.log(option);
+              const valDomains = userSelectedValues.map((val) => val.skills.name);
+              // console.log('disabled option',valDomains, valDomains.indexOf(option.name) !== -1, option.name)
+              return valDomains.indexOf(option.name) !== -1;
+              // return allSelectedDomains.map(val => val.domain).filter(value => value.id !== option.id);
+            }}
+            disabled={skillForm.domain?.name === ''}
             value={skillForm.skills}
             getOptionLabel={(option) => option.name}
             renderInput={(params) => (
@@ -208,7 +221,7 @@ function AddSkills() {
           <Autocomplete
             id="combo-box-demo"
             options={skillLevel}
-            sx={{ width: 400 }}
+            sx={{ width: 250 }}
             onChange={(event: any, newVal: any) => {
               setSkillForm({
                 ...skillForm,
@@ -244,35 +257,10 @@ function AddSkills() {
             error={skillFormErrors.experience.length > 0}
             helperText={skillFormErrors.experience}
           />
-          <Button type="submit" variant="contained">
-            Submit
-          </Button>
-        </form>
+
+          { index !== 0 ? <CancelIcon onClick={deleteSkillRow} /> : null}
+        {/* </form> */}
       </div>
-    </div>
-    // <h2 style={{ textAlign: "center" }}>Add Skills</h2>
-
-    // </Grid>
-
-    // <Stack gap={5}>
-    //   <Stack spacing={2} alignItems="center" sx={{ width: 500 }}>
-    //     <Autocomplete
-    //     className="auto-complete"
-    //       multiple
-    //       id="tags-standard"
-    //       options={domainSet}
-    //       getOptionLabel={(option) => option.name}
-    //       renderInput={(params) => (
-    //         <TextField
-    //           {...params}
-    //           variant="standard"
-    //           label="Multiple values"
-    //           placeholder="Favorites"
-    //         />
-    //       )}
-    //     />
-    //   </Stack>
-    // </Stack>
   );
 }
 
