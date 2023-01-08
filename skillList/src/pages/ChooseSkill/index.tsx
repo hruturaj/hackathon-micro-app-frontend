@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import axiosRequest from "../../services/http.service";
 import "./index.scss";
 
-const SkillList = () => {
+const ChooseSkill = () => {
   const [rowId, setRowId] = useState(null);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -31,8 +31,25 @@ const SkillList = () => {
       headerAlign: "center",
     },
     {
-      field: "name",
+      field: "Skill",
       headerName: "Skill Name",
+      flex: 1,
+      valueGetter: ({ value }) => {
+        return value?.name;
+      },
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "YOE",
+      headerName: "Experience(Years)",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "skillLevel",
+      headerName: "Skill Level",
       flex: 1,
       align: "center",
       headerAlign: "center",
@@ -49,13 +66,13 @@ const SkillList = () => {
   ];
 
   const handleAdd = () => {
-    navigate("/skill/list/new");
+    navigate("/skill/choose/new");
   };
 
   useEffect(() => {
     setLoading(true);
     axiosRequest
-      .get("/skill", {
+      .get("/user-skill", {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -69,7 +86,7 @@ const SkillList = () => {
   }, []);
 
   return (
-    <div className="skillListContainer">
+    <div className="ChooseSkillContainer">
       <div className="buttonContainer">
         <Button variant="contained" onClick={handleAdd}>
           Add
@@ -87,4 +104,4 @@ const SkillList = () => {
   );
 };
 
-export default SkillList;
+export default ChooseSkill;

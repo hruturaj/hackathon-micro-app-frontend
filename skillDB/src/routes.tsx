@@ -3,10 +3,11 @@ import { Route } from "./models/routes";
 
 const HomePage = React.lazy(() => import("./homePage"));
 const SkillList = React.lazy(() => import("./page/skillList"));
-const AboutPage = React.lazy(()=> import("app2/About"));
 import ErrorBoundary from "./errorBoundary";
-const ChooseSkills = React.lazy(() => import("./components/AddSkillsParent"))
 const AddDomain = React.lazy(() => import("./components/AddDomain"));
+const AboutPage = React.lazy(() => import("app2/About"));
+const ChooseSkill = React.lazy(() => import("app2/ChooseSkill"));
+const AddChooseSkill = React.lazy(() => import("app2/AddChooseSkill"));
 
 const routes: Array<Route> = [
   // {
@@ -14,8 +15,12 @@ const routes: Array<Route> = [
   //   element: <HomePage redirectLink={"/skill/list"} />,
   // },
   {
-    path: '/about',
-    element:  <ErrorBoundary><AboutPage/></ErrorBoundary>
+    path: "/about",
+    element: (
+      <ErrorBoundary>
+        <AboutPage />
+      </ErrorBoundary>
+    ),
   },
   {
     path: "/skill/list",
@@ -27,7 +32,19 @@ const routes: Array<Route> = [
   },
   {
     path: "/skill/choose",
-    element: <ChooseSkills />,
+    element: (
+      <ErrorBoundary>
+        <ChooseSkill />
+      </ErrorBoundary>
+    ),
+  },
+  {
+    path: "/skill/choose/new",
+    element: (
+      <ErrorBoundary>
+        <AddChooseSkill />
+      </ErrorBoundary>
+    ),
   },
   {
     path: "/skill/report",

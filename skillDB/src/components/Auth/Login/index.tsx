@@ -92,7 +92,9 @@ function Login() {
       .post("login", loginForm)
       .then((response) => {
         if (response.status === 200) {
-          localStorage.setItem("token", response?.data?.data?.token);
+          console.log(response);
+          localStorage.setItem("token", response?.data?.data?.jwt_token);
+          localStorage.setItem("user", response?.data?.data?.id);
           navigate("/");
         }
       })

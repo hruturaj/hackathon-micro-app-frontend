@@ -109,7 +109,7 @@ const Header = ({ appName, ...props }) => {
                     key={item?.name}
                     sx={{ color: "#fff" }}
                     onClick={() => {
-                      localStorage.removeItem("token");
+                      localStorage.clear();
                       navigate("/auth/login");
                     }}
                   >
