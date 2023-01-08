@@ -10,8 +10,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Autocomplete, Snackbar, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import axiosRequest from "../../../services/http.service";
-import debounce from "lodash/debounce";
 import { useSnackbar } from "notistack";
+import { getAllDomains, getAllSkills } from "../../../services/skills-lib";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
@@ -29,30 +29,45 @@ const EditModal = ({
   setTableData,
   tableLoading,
 }) => {
+  const skillLevelOptions = ["Basic", "Intermediate", "Expert"];
   const [errorValues, seterrorValues] = useState({
     domainError: "",
     skillsError: "",
+    experience: "",
+    level: "",
   });
   const [domains, setDomains] = useState([]);
-  const [selectedDomain, setselectedDomain] = useState<any>(
-    params?.row?.DomainMaster
-  );
-  const [selectedskill, setselectedskill] = useState<any>(params?.row?.name);
+  const [selectedDomain, setselectedDomain] = useState<any>({
+    ...params?.row?.DomainMaster,
+    id: params?.row?.domainMasterId,
+  });
+  const [selectedSkill, setSelectedSkill] = useState<any>({
+    ...params?.row?.Skill,
+    id: params?.row?.skillId,
+  });
+  const [selectedLevel, setSelectedLevel] = useState(params?.row?.skillLevel);
+  const [selectedYOE, setSelectedYOE] = useState(params?.row?.YOE);
   const [domainLoading, setDomainLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [skillsSet, setskillsSet] = useState([]);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   useEffect(() => {
     setDomainLoading(true);
-    axiosRequest
-      .get("domain", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
+    getAllDomains()
       .then((res: any) => {
-        setDomains(res?.data?.data);
+        setDomains(res.data.data);
       })
       .finally(() => {
         setDomainLoading(false);
+      });
+
+    getAllSkills(selectedDomain?.id)
+      .then((res) => {
+        setskillsSet(res?.data?.data);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }, []);
 
@@ -60,45 +75,26 @@ const EditModal = ({
     setVisible(false);
   };
 
-  const debounceSearch = React.useRef(
-    debounce((value) => {
-      axiosRequest
-        .get("skill/search/" + selectedDomain?.id + "?search=" + value, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        })
-        .then((res: any) => {
-          if (res.data?.exist) {
-            seterrorValues({
-              ...errorValues,
-              skillsError: "Skill exists",
-            });
-          } else {
-            seterrorValues({
-              ...errorValues,
-              skillsError: "",
-            });
-          }
-        });
-    }, 500)
-  );
-
-  const handleSearch = (value: string) => {
-    setselectedskill(value);
-    debounceSearch.current(value);
-  };
-
   const handleSubmit = () => {
     if (
       errorValues?.domainError?.length !== 0 ||
-      errorValues?.skillsError?.length !== 0
+      errorValues?.skillsError?.length !== 0 ||
+      errorValues?.experience?.length !== 0 ||
+      errorValues?.level?.length !== 0
     ) {
       return;
     }
     setLoading(true);
     axiosRequest
       .put(
-        `skill/${params.id}`,
-        { name: selectedskill, domainMasterId: selectedDomain?.id },
+        `/user-skill/${params?.row?.id}`,
+        {
+          skillLevel: selectedLevel,
+          YOE: Number(selectedYOE),
+          userId: Number(localStorage.getItem("user")),
+          domainMasterId: Number(selectedDomain?.id),
+          skillId: Number(selectedSkill?.id),
+        },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
@@ -107,7 +103,7 @@ const EditModal = ({
         if (res?.status < 400) {
           tableLoading(true);
           axiosRequest
-            .get("/skill", {
+            .get("/user-skill", {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },
@@ -152,7 +148,7 @@ const EditModal = ({
         open={visible}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          <b>Update Domain & Skill</b>
+          <b>Update selected skill</b>
           <IconButton
             aria-label="close"
             onClick={handleClose}
@@ -179,7 +175,7 @@ const EditModal = ({
             <Autocomplete
               id={`domain-field-${params?.id}`}
               options={domains}
-              defaultValue={params?.row?.DomainMaster}
+              defaultValue={selectedDomain}
               loading={domainLoading}
               size="small"
               disabled={loading}
@@ -188,6 +184,13 @@ const EditModal = ({
                   ...errorValues,
                   domainError: "",
                 });
+                getAllSkills(value?.id)
+                  .then((res) => {
+                    setskillsSet(res?.data?.data);
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
                 setselectedDomain(value);
               }}
               sx={{ width: 400 }}
@@ -204,19 +207,62 @@ const EditModal = ({
               )}
             />
 
-            <TextField
-              id={`skillName-${params?.id}`}
-              variant="outlined"
-              value={selectedskill}
-              sx={{ width: 400 }}
-              size="small"
-              onChange={(e) => {
-                handleSearch(e.target.value);
+            <Autocomplete
+              options={skillsSet}
+              onChange={(event: any, newVal: any, reason: any) => {
+                setSelectedSkill(newVal);
               }}
-              disabled={loading}
-              label="Add Skills"
-              error={errorValues.skillsError.length > 0 && selectedskill !== ""}
-              helperText={selectedskill == "" ? "" : errorValues.skillsError}
+              size="small"
+              defaultValue={selectedSkill}
+              loading={skillsSet.length === 0}
+              getOptionLabel={(option: any) => option?.name}
+              disableClearable
+              renderInput={(params) => (
+                <TextField
+                  name="skills"
+                  {...params}
+                  label="Skills"
+                  placeholder="Skills"
+                  error={errorValues.skillsError.length > 0}
+                  helperText={errorValues.skillsError}
+                />
+              )}
+            />
+
+            <Autocomplete
+              size="small"
+              id="combo-box-demo"
+              options={skillLevelOptions}
+              onChange={(event: any, newVal: any) => {
+                setSelectedLevel(newVal);
+              }}
+              disableClearable
+              value={selectedLevel}
+              getOptionLabel={(option) => option}
+              renderInput={(params) => (
+                <TextField
+                  name="level"
+                  {...params}
+                  label="Skill Level"
+                  error={errorValues.level.length > 0}
+                  helperText={errorValues.level}
+                />
+              )}
+            />
+
+            <TextField
+              size="small"
+              type="number"
+              name="experience"
+              onChange={(e) => {
+                setSelectedYOE(e.target.value);
+              }}
+              value={selectedYOE}
+              placeholder="Experience"
+              label="Experience"
+              variant="outlined"
+              error={errorValues.experience.length > 0}
+              helperText={errorValues.experience}
             />
           </div>
         </DialogContent>

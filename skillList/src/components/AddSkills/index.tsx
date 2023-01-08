@@ -125,17 +125,7 @@ function AddSkills({
   };
 
   return (
-    <div
-      className="main-form"
-      style={
-        index === 0
-          ? {
-              right: "17px",
-              position: "relative",
-            }
-          : {}
-      }
-    >
+    <div className="main-form" style={index === 0 ? {} : {}}>
       {/* <form onSubmit={submitSkillsForm} style={{
           display: "flex",
           justifyContent: "center",
@@ -169,7 +159,6 @@ function AddSkills({
             name="domain"
             onBlur={(e) => {
               const { name, value } = e.target;
-              console.log("domain validate", name, value);
               validateForm(name, value);
             }}
             {...params}

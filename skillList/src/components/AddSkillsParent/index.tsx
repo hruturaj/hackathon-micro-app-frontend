@@ -135,15 +135,18 @@ function AddSkillsParent() {
 
   return (
     <div>
-      <h2 style={{ textAlign: "center", display: "block" }}>Problem St2</h2>
+      <h2 style={{ textAlign: "center", display: "block" }}>
+        Choose Your Skills
+      </h2>
       <div
         style={{
+          display: "flex",
           justifyContent: "center",
-          padding: "50px 0 100px 0",
+          paddingTop: 50,
         }}
       >
         <form style={{ textAlign: "center" }} onSubmit={submitHandler}>
-          <div style={{ paddingBottom: "15px" }}>
+          <div style={{ paddingBottom: "30px" }}>
             {alldomains &&
               // allskills &&
               [...Array(formsCount)].map((e, i) => (
@@ -171,20 +174,38 @@ function AddSkillsParent() {
                 />
               ))}
           </div>
-          <Button
-            variant="contained"
-            disabled={disableAdd()}
-            style={{ marginRight: "15px" }}
-            onClick={() => {
-              setformsCount(formsCount + 1);
-              userSelectedValues.push(initialValues);
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              columnGap: "20px",
             }}
           >
-            ADD
-          </Button>
-          <Button disabled={disableSubmit()} type="submit" variant="contained">
-            Submit
-          </Button>
+            <Button
+              sx={{
+                width: 120,
+              }}
+              variant="contained"
+              disabled={disableAdd()}
+              onClick={() => {
+                setformsCount(formsCount + 1);
+                userSelectedValues.push(initialValues);
+              }}
+            >
+              ADD New
+            </Button>
+            <Button
+              sx={{
+                width: 120,
+              }}
+              disabled={disableSubmit()}
+              type="submit"
+              variant="contained"
+            >
+              Submit
+            </Button>
+          </div>
         </form>
       </div>
     </div>
