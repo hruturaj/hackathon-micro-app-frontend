@@ -129,6 +129,7 @@ function AddSkillsParent() {
               // allskills &&
               [...Array(formsCount)].map((e, i) => (
                 <AddSkills
+                  key={i}
                   index={i}
                   userSelectedValues={userSelectedValues}
                   updateFn={updateValues}

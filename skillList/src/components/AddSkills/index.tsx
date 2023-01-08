@@ -3,21 +3,10 @@ import "../AddSkills/addskills.scss";
 import CancelIcon from "@mui/icons-material/Cancel";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
-import axiosRequest from "../../services/http.service";
 import { getAllSkills } from "../../services/skills-lib";
-// const skillSet = [
-//   { name: "Skill1", id: "1" },
-//   { name: "Skill2", id: "2" },
-//   { name: "Skill3", id: "3" },
-// ];
 
 const skillLevel = ["Basic", "Intermediate", "Expert"];
 
-// const domainSet = [
-//   { name: "Tech", id: "1" },
-//   { name: "LeaderShip", id: "2" },
-//   { name: "Business", id: "3" },
-// ];
 function AddSkills({
   domainSet,
   skillSet,
@@ -25,13 +14,11 @@ function AddSkills({
   index,
   userSelectedValues,
 }) {
-  // const domainSet: any = [];
-  const allSkills: any = [];
   const initialValues: any = {
-    domainMasterId: null,
-    skillId: null,
+    domainMasterId: undefined,
+    skillId: undefined,
     skillLevel: "",
-    YOE: null,
+    YOE: undefined,
   };
 
   const [skillForm, setSkillForm] = useState(initialValues);
@@ -42,7 +29,7 @@ function AddSkills({
     experience: "",
   });
   const [skillsSet, setskillsSet] = useState([]);
-  const [currentDomain, setCurrentDomain] = useState(null);
+  const [currentDomain, setCurrentDomain] = useState(undefined);
 
   useEffect(() => {
     updateFn(skillForm, index);
@@ -111,14 +98,9 @@ function AddSkills({
 
   return (
     <div className="main-form" style={index === 0 ? {} : {}}>
-      {/* <form onSubmit={submitSkillsForm} style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: '10px',
-          marginBottom: '10px'
-        }}> */}
       <Autocomplete
-        id="combo-box-demo"
+        key={`combo-box-demo-${index}`}
+        id={`combo-box-demo-${index}`}
         options={domainSet}
         sx={{ width: 250 }}
         disableClearable
@@ -155,6 +137,8 @@ function AddSkills({
       />
 
       <Autocomplete
+        key={`skill-box-${index}`}
+        id={`skill-box-${index}`}
         sx={{ width: 250 }}
         options={skillsSet}
         onChange={(event: any, newVal: any, reason: any) => {
@@ -175,7 +159,7 @@ function AddSkills({
         //   return valDomains.indexOf(option.name) !== -1;
         //   // return allSelectedDomains.map(val => val.domain).filter(value => value.id !== option.id);
         // }}
-        disabled={skillForm.domainMasterId === null}
+        disabled={skillForm.domainMasterId === undefined}
         // value={skillForm.skillId}
         loading={skillsSet.length === 0}
         getOptionLabel={(option: any) => option?.name}
@@ -197,7 +181,8 @@ function AddSkills({
       />
 
       <Autocomplete
-        id="combo-box-demo"
+        key={`level-box-${index}`}
+        id={`level-box-${index}`}
         options={skillLevel}
         sx={{ width: 250 }}
         onChange={(event: any, newVal: any) => {
@@ -225,6 +210,8 @@ function AddSkills({
       />
 
       <TextField
+        key={`exp-field-${index}`}
+        id={`exp-field-${index}`}
         type="number"
         name="experience"
         onChange={(e) => {
@@ -241,7 +228,11 @@ function AddSkills({
         helperText={skillFormErrors.experience}
       />
 
-      {index !== 0 ? <CancelIcon onClick={deleteSkillRow} /> : null}
+      {index !== 0 ? (
+        <CancelIcon onClick={deleteSkillRow} />
+      ) : (
+        <div style={{ width: 24 }}></div>
+      )}
       {/* </form> */}
     </div>
   );
