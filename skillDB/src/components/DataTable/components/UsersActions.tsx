@@ -1,6 +1,6 @@
-import { Box, CircularProgress, Fab, IconButton } from "@mui/material";
+import { Box, CircularProgress, Fab, IconButton, Tooltip } from "@mui/material";
 import { green } from "@mui/material/colors";
-import { Delete, Save } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import React, { useState } from "react";
 import axiosRequest from "../../../services/http.service";
 import EditModal from "./EditModal";
@@ -82,39 +82,43 @@ const UsersActions = ({ params, rowId, setRowId, setRows, setLoading }) => {
           columnGap: "16px",
         }}
       >
-        <Fab
-          color="primary"
-          sx={{
-            width: 36,
-            height: 36,
-          }}
-          onClick={handleUpdate}
-        >
-          <Save sx={{ fontSize: "16px" }} />
-        </Fab>
-        <Fab
-          color="primary"
-          sx={{
-            width: 36,
-            height: 36,
-          }}
-          disabled={deleteloading}
-          onClick={handleDelete}
-        >
-          <Delete sx={{ fontSize: "16px" }} />
-          {deleteloading && (
-            <CircularProgress
-              size={40}
-              sx={{
-                color: green[500],
-                position: "absolute",
-                top: -2,
-                left: -2,
-                zIndex: 1,
-              }}
-            />
-          )}
-        </Fab>
+        <Tooltip title={"Edit"} placement="top" arrow>
+          <Fab
+            color="primary"
+            sx={{
+              width: 36,
+              height: 36,
+            }}
+            onClick={handleUpdate}
+          >
+            <Edit sx={{ fontSize: "16px" }} />
+          </Fab>
+        </Tooltip>
+        <Tooltip title={"Delete"} placement="top" arrow>
+          <Fab
+            color="primary"
+            sx={{
+              width: 36,
+              height: 36,
+            }}
+            disabled={deleteloading}
+            onClick={handleDelete}
+          >
+            <Delete sx={{ fontSize: "16px" }} />
+            {deleteloading && (
+              <CircularProgress
+                size={40}
+                sx={{
+                  color: green[500],
+                  position: "absolute",
+                  top: -2,
+                  left: -2,
+                  zIndex: 1,
+                }}
+              />
+            )}
+          </Fab>
+        </Tooltip>
       </Box>
     </>
   );
