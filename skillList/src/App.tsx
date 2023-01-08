@@ -31,7 +31,7 @@ const App = () => (
           <Route
             key={"home"}
             path={"/"}
-            element={<Navigate to="/skill/list" />}
+            element={<Navigate to="/skill/choose" />}
           />
           {routes.map((route) => (
             <Route key={route.path} path={route.path} element={route.element} />

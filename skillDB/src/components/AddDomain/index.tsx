@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
 import axiosRequest from "../../services/http.service";
 import { useSnackbar } from "notistack";
-import { getAllDomains, getAllSkills } from "../../services/skills-lib";
 import AddDomainFields from "../AddDomainFields";
 import CloseIcon from "@mui/icons-material/Close";
 import { useNavigate } from "react-router-dom";
