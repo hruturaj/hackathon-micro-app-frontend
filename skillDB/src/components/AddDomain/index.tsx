@@ -58,7 +58,6 @@ function AddDomain() {
       });
     });
 
-    console.log(arr);
     axiosRequest
       .post(
         "skill",
@@ -68,7 +67,6 @@ function AddDomain() {
         }
       )
       .then((res: any) => {
-        console.log(res);
         enqueueSnackbar("Data Added Successfully !", {
           autoHideDuration: 2000,
           key: "addSkillRecord",

@@ -30,16 +30,12 @@ function AddDomainFields({
     if (selectedDomain === null || selectedskills.length === 0) {
       return;
     }
-    // console.log("working here******")
     let obj = {
       domain: { id: selectedDomain.id, name: selectedDomain.name },
       skills: selectedskills,
       // .map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
     };
-    // console.log("******",obj,index)
     updateFn(obj, index);
-
-    console.log("&&&&&&&&&&&&&&&&&&&&&&", allSelectedDomains);
   }, [selectedDomain, selectedskills]);
 
   const handleChange = (event: any, value?: any, reason?: any) => {
@@ -135,7 +131,6 @@ function AddDomainFields({
         size="small"
         sx={{ minWidth: 200, flex: 0.35 }}
         onChange={(e, v, reason) => {
-          console.log("onchange", e, v, reason);
           handleChange(e, v, reason);
         }}
         // renderTags={(value: readonly string[], getTagProps) =>

@@ -32,7 +32,6 @@ function Register() {
       ...prevState,
       [name]: value,
     }));
-    console.log(registerForm);
   };
 
   const validateForm = (name: string, value: string) => {
@@ -91,7 +90,6 @@ function Register() {
   };
 
   const handleSubmit = (event: any) => {
-    console.log("Hello");
     event.preventDefault();
     setFormSubmit(true);
     setLoading(true);
@@ -99,7 +97,6 @@ function Register() {
       .post("signup", registerForm)
       .then((response) => {
         if (response.status === 200) {
-          console.log(response);
           //   localStorage.setItem("token", response.data.data.token);
           setLoading(false);
 
@@ -108,7 +105,6 @@ function Register() {
           setLoading(false);
         }
       });
-    console.log(registerForm);
   };
 
   return (

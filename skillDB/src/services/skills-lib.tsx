@@ -7,8 +7,6 @@
 //     })
 //     .then();
 
-//   console.log(response);
-
 //   return response;
 // };
 

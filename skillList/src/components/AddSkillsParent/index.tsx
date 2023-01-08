@@ -25,25 +25,14 @@ function AddSkillsParent() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   console.log("====>", userSelectedValues);
-  // }, [userSelectedValues]);
-
   useEffect(() => {
     getAllDomains().then((res: any) => {
-      console.log("responseeee", res.data.data);
       setalldomains(res.data.data);
     });
-
-    // getAllSkills().then((res: any) => {
-    //   console.log(res.data.data);
-    //   setallskills(res.data.data);
-    // });
   }, []);
 
   const submitHandler = (event: any) => {
     event.preventDefault();
-    console.log("submitted", userSelectedValues);
     // API CALL TO SUBMIT USER SKILLS FOR A DOMAIN
     // USERID NEED TO BE ADDED CORRECTLY
     const finalUserSelectedValues = userSelectedValues.map(
@@ -77,15 +66,11 @@ function AddSkillsParent() {
   const updateValues = (obj, index, isDelete = false) => {
     let v1 = [...userSelectedValues];
 
-    console.log("inside update", obj, index);
     v1[index] = obj;
     setuserSelectedValues(v1);
     if (isDelete) {
-      console.log("after delete", userSelectedValues, index, obj);
-      console.log("handle delete", index, userSelectedValues.indexOf(index));
       const arr1 = [...userSelectedValues];
       arr1.splice(index, 1);
-      console.log("after slice", arr1);
 
       setuserSelectedValues(arr1);
       setformsCount(formsCount - 1);
@@ -93,13 +78,6 @@ function AddSkillsParent() {
   };
 
   const disableAdd = () => {
-    console.log(
-      "disable check",
-      userSelectedValues[formsCount - 1].domainMasterId &&
-        userSelectedValues[formsCount - 1].skillId &&
-        userSelectedValues[formsCount - 1].skillLevel &&
-        userSelectedValues[formsCount - 1].YOE
-    );
     if (
       userSelectedValues[formsCount - 1].domainMasterId &&
       userSelectedValues[formsCount - 1].skillId &&

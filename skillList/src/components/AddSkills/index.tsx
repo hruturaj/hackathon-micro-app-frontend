@@ -45,18 +45,15 @@ function AddSkills({
   const [currentDomain, setCurrentDomain] = useState(null);
 
   useEffect(() => {
-    console.log("useeffect add skills child", skillForm, index);
     updateFn(skillForm, index);
   }, [skillForm]);
 
   const submitSkillsForm = (event: any) => {
     event.preventDefault();
-    console.log(skillForm);
   };
 
   const validateForm = (name: string, value: any) => {
     const errors = skillFormErrors;
-    console.log(name, value);
     if (name == "domain") {
       errors.domain = "";
       if (value.length < 1) {
@@ -106,18 +103,6 @@ function AddSkills({
     }
 
     return;
-  };
-
-  const filterSkillset = () => {
-    console.log(skillForm.domain);
-    if (skillForm.domain) {
-      const newskillarray = skillSet.filter((val: any) => {
-        return val.domainMasterId === skillForm.domain.id;
-      });
-      return newskillarray;
-    } else {
-      return [];
-    }
   };
 
   const deleteSkillRow = () => {
@@ -173,7 +158,6 @@ function AddSkills({
         sx={{ width: 250 }}
         options={skillsSet}
         onChange={(event: any, newVal: any, reason: any) => {
-          console.log("skills", newVal);
           if (reason === "clear") {
             setSkillForm({
               ...skillForm,
@@ -187,9 +171,7 @@ function AddSkills({
           }
         }}
         // getOptionDisabled={(option: any) => {
-        //   // console.log(option);
         //   const valDomains = userSelectedValues.map((val) => val.skills.name);
-        //   // console.log('disabled option',valDomains, valDomains.indexOf(option.name) !== -1, option.name)
         //   return valDomains.indexOf(option.name) !== -1;
         //   // return allSelectedDomains.map(val => val.domain).filter(value => value.id !== option.id);
         // }}
