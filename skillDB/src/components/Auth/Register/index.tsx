@@ -95,16 +95,11 @@ function Register() {
     setLoading(true);
     const response: any = axiosRequest
       .post("signup", registerForm)
-      .then((response) => {
-        if (response.status === 200) {
+
           //   localStorage.setItem("token", response.data.data.token);
-          setLoading(false);
 
           navigate("/auth/login");
-        } else {
-          setLoading(false);
-        }
-      });
+      }).catch((err)=> console.log(err)).finally(()=> setLoading(false));
   };
 
   return (

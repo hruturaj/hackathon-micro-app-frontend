@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import { getAllSkills } from "../../services/skills-lib";
 
-const skillLevel = ["Basic", "Intermediate", "Expert"];
+const skillLevel = ["Beginner", "Intermediate", "Expert"];
 
 function AddSkills({
   domainSet,
