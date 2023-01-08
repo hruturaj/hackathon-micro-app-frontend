@@ -91,23 +91,16 @@ function Register() {
   };
 
   const handleSubmit = (event: any) => {
-    console.log("Hello");
     event.preventDefault();
     setFormSubmit(true);
     setLoading(true);
     const response: any = axiosRequest
       .post("signup", registerForm)
-      .then((response) => {
-        if (response.status === 200) {
-          console.log(response);
+      .then(() => {
           //   localStorage.setItem("token", response.data.data.token);
-          setLoading(false);
 
           navigate("/auth/login");
-        } else {
-          setLoading(false);
-        }
-      });
+      }).catch((err)=> console.log(err)).finally(()=> setLoading(false));
     console.log(registerForm);
   };
 

@@ -11,7 +11,7 @@ import { getAllSkills } from "../../services/skills-lib";
 //   { name: "Skill3", id: "3" },
 // ];
 
-const skillLevel = ["Basic", "Intermediate", "Expert"];
+const skillLevel = ["Beginner", "Intermediate", "Expert"];
 
 // const domainSet = [
 //   { name: "Tech", id: "1" },
