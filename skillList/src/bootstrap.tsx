@@ -7,7 +7,6 @@ import App from "./app";
 
 const rootElement = document.getElementById("app");
 const root = createRoot(rootElement!);
-console.log(root);
 root.render(
   <StrictMode>
     <BrowserRouter>

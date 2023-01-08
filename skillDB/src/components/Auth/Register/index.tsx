@@ -32,7 +32,6 @@ function Register() {
       ...prevState,
       [name]: value,
     }));
-    console.log(registerForm);
   };
 
   const validateForm = (name: string, value: string) => {
@@ -96,12 +95,11 @@ function Register() {
     setLoading(true);
     const response: any = axiosRequest
       .post("signup", registerForm)
-      .then(() => {
+
           //   localStorage.setItem("token", response.data.data.token);
 
           navigate("/auth/login");
       }).catch((err)=> console.log(err)).finally(()=> setLoading(false));
-    console.log(registerForm);
   };
 
   return (

@@ -31,9 +31,7 @@ const Header = ({ appName, ...props }) => {
       ]
     : [
         { name: "Home", route: "/skill/list" },
-        { name: "About", route: "/about" },
         { name: "Choose", route: "/skill/choose" },
-        { name: "Report", route: "/skill/report" },
         { name: "Logout", route: "/auth/login" },
       ];
 

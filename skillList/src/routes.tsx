@@ -7,10 +7,6 @@ const AboutPage = React.lazy(() => import("./aboutPage"));
 
 const routes: Array<Route> = [
   {
-    path: "/about",
-    element: <AboutPage />,
-  },
-  {
     path: "/skill/choose/new",
     element: <AddSkillsParent />,
   },
