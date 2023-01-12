@@ -33,7 +33,6 @@ function AddDomainFields({
     let obj = {
       domain: { id: selectedDomain.id, name: selectedDomain.name },
       skills: selectedskills,
-      // .map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
     };
     updateFn(obj, index);
   }, [selectedDomain, selectedskills]);
