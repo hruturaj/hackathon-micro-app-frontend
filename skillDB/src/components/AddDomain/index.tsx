@@ -141,7 +141,7 @@ function AddDomain() {
               variant="contained"
               disabled={
                 formErrors?.domainError?.trim()?.length > 0 ||
-                formErrors?.domainError?.trim()?.length > 0 ||
+                formErrors?.skillsError?.trim()?.length > 0 ||
                 userSelectedDomains.length === 0 ||
                 currentSkills?.length === 0
               }
