@@ -4,12 +4,13 @@ import UsersActions from "../../components/DataTable/components/UsersActions";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import axiosRequest from "../../services/http.service";
+import { exportFile } from "../../utils";
 import "./index.scss";
 
 const SkillList = () => {
   const [rowId, setRowId] = useState(null);
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const columns = [
@@ -71,8 +72,15 @@ const SkillList = () => {
   return (
     <div className="skillListContainer">
       <div className="buttonContainer">
-        <Button variant="contained" onClick={handleAdd}>
+        <Button variant="contained" onClick={handleAdd} disabled={loading}>
           Add
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => exportFile(rows)}
+          disabled={loading}
+        >
+          Download
         </Button>
       </div>
       <DataTable
