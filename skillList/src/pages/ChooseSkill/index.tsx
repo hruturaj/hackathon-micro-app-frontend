@@ -5,11 +5,12 @@ import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import axiosRequest from "../../services/http.service";
 import "./index.scss";
+import { exportFile } from "../../utils";
 
 const ChooseSkill = () => {
   const [rowId, setRowId] = useState(null);
   const [rows, setRows] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const columns = [
@@ -88,8 +89,15 @@ const ChooseSkill = () => {
   return (
     <div className="ChooseSkillContainer">
       <div className="buttonContainer">
-        <Button variant="contained" onClick={handleAdd}>
+        <Button variant="contained" onClick={handleAdd} disabled={loading}>
           Add
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => exportFile(rows)}
+          disabled={loading}
+        >
+          Download
         </Button>
       </div>
       <DataTable
