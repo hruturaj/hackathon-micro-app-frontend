@@ -179,11 +179,17 @@ const EditModal = ({
               loading={domainLoading}
               size="small"
               disabled={loading}
+              getOptionDisabled={(option: any) =>
+                option?.name === selectedDomain?.name
+              }
               onChange={(e, value) => {
                 seterrorValues({
                   ...errorValues,
                   domainError: "",
+                  skillsError: "Please select skill",
                 });
+                setselectedDomain(value);
+                setSelectedSkill(null);
                 getAllSkills(value?.id)
                   .then((res) => {
                     setskillsSet(res?.data?.data);
@@ -191,7 +197,6 @@ const EditModal = ({
                   .catch((err) => {
                     console.log(err);
                   });
-                setselectedDomain(value);
               }}
               sx={{ width: 400 }}
               disableClearable
@@ -210,9 +215,14 @@ const EditModal = ({
             <Autocomplete
               options={skillsSet}
               onChange={(event: any, newVal: any, reason: any) => {
+                seterrorValues({
+                  ...errorValues,
+                  skillsError: "",
+                });
                 setSelectedSkill(newVal);
               }}
               size="small"
+              value={selectedSkill}
               defaultValue={selectedSkill}
               loading={skillsSet.length === 0}
               getOptionLabel={(option: any) => option?.name}
