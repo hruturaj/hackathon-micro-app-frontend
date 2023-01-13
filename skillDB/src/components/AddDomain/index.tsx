@@ -11,10 +11,14 @@ import { useNavigate } from "react-router-dom";
 function AddDomain() {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const navigate = useNavigate();
-  const [userSelectedDomains, setUserSelectedDomains] = useState([]);
+  const initialValues: any = {
+    id: 1,
+    domain: { id: null, name: '' },
+    skills: []
+  };
+  const [userSelectedDomains, setUserSelectedDomains] = useState([initialValues]);
   const [alldomains, setAlldomains] = useState([]);
   const [currentSkills, setCurrentSkill] = useState([]);
-  const [formsCount, setFormsCount] = useState(1);
   const [formErrors, setFormErrors] = useState({
     domainError: "",
     skillsError: "",
@@ -32,11 +36,19 @@ function AddDomain() {
 
   useEffect(() => {}, [userSelectedDomains]);
 
-  const updateValues = (obj: any, index: number) => {
+  const updateValues = (obj: any, index: number, isDelete: boolean) => {
     let v1 = userSelectedDomains;
     v1.splice(index, 1, obj);
     setUserSelectedDomains(v1);
   };
+
+  const deleteDomainRow = (index: number, obj: any) => {
+    console.log(userSelectedDomains, index, obj)
+    let arr = [...userSelectedDomains];
+    arr.splice(index, 1);
+    console.log(arr)
+    setUserSelectedDomains(arr);
+  }
 
   const submitHandler = (event: any) => {
     event.preventDefault();
@@ -57,6 +69,8 @@ function AddDomain() {
         arr.push(value);
       });
     });
+
+    console.log(arr)
 
     axiosRequest
       .post(
@@ -101,9 +115,11 @@ function AddDomain() {
           <div style={{ paddingBottom: "15px" }}>
             {alldomains &&
               // allskills &&
-              [...Array(formsCount)].map((e, i) => (
+              userSelectedDomains.map((e, i) => (
                 <AddDomainFields
+                  key={`row-${i}`}
                   index={i}
+                  deleteHandler={deleteDomainRow}
                   allSelectedDomains={userSelectedDomains}
                   updateFn={updateValues}
                   // skillSet={allskills}
@@ -125,13 +141,17 @@ function AddDomain() {
           >
             <Button
               disabled={
-                formsCount === alldomains.length ||
-                userSelectedDomains[formsCount - 1] === undefined ||
+                userSelectedDomains.length === alldomains.length ||
+                userSelectedDomains[userSelectedDomains.length - 1] === undefined ||
                 currentSkills?.length === 0
               }
               variant="contained"
               style={{ width: 120 }}
-              onClick={() => setFormsCount(formsCount + 1)}
+              onClick={() => {
+                let domainArr = [...userSelectedDomains];
+                domainArr.push({...initialValues, id: userSelectedDomains.length + 1});
+                setUserSelectedDomains(domainArr)
+              }}
             >
               Add New
             </Button>
@@ -141,7 +161,7 @@ function AddDomain() {
               variant="contained"
               disabled={
                 formErrors?.domainError?.trim()?.length > 0 ||
-                formErrors?.domainError?.trim()?.length > 0 ||
+                formErrors?.skillsError?.trim()?.length > 0 ||
                 userSelectedDomains.length === 0 ||
                 currentSkills?.length === 0
               }

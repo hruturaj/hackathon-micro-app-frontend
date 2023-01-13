@@ -2,6 +2,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import axiosRequest from "../../services/http.service";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 function AddDomainFields({
   index,
@@ -10,6 +11,7 @@ function AddDomainFields({
   allSelectedDomains,
   setFormErrors,
   setCurrentSkill,
+  deleteHandler
 }) {
   const [selectedDomain, setselectedDomain] = useState<any>(null);
   const [selectedskills, setselectedskills] = useState<any>([]);
@@ -84,6 +86,11 @@ function AddDomainFields({
           });
       }
     }
+  };
+
+  const deleteDomainRow = () => {
+    console.log('delete', allSelectedDomains)
+    // updateFn(skillForm, index, true);
   };
 
   return (
@@ -168,6 +175,15 @@ function AddDomainFields({
           />
         )}
       />
+
+      {index !== 0 ? (
+        <CancelIcon onClick={() => deleteHandler(index, {
+          domain: { id: selectedDomain.id, name: selectedDomain.name },
+          skills: selectedskills,
+        })} />
+      ) : (
+        <div style={{ width: 24 }}></div>
+      )}
     </div>
   );
 }
