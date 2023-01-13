@@ -8,7 +8,7 @@ import DialogActions from "@mui/material/DialogActions";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import { Autocomplete, Snackbar, TextField } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axiosRequest from "../../../services/http.service";
 import debounce from "lodash/debounce";
 import { useSnackbar } from "notistack";
@@ -41,6 +41,7 @@ const EditModal = ({
   const [domainLoading, setDomainLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const inputRef = useRef();
 
   useEffect(() => {
     setDomainLoading(true);
@@ -84,6 +85,10 @@ const EditModal = ({
 
   const handleSearch = (value: string) => {
     setselectedskill(value);
+    seterrorValues({
+      ...errorValues,
+      skillsError: "",
+    });
     debounceSearch.current(value);
   };
 
@@ -183,12 +188,18 @@ const EditModal = ({
               loading={domainLoading}
               size="small"
               disabled={loading}
+              getOptionDisabled={(option: any) =>
+                option?.name === selectedDomain?.name
+              }
               onChange={(e, value) => {
                 seterrorValues({
                   ...errorValues,
                   domainError: "",
+                  skillsError: "Please enter skill",
                 });
                 setselectedDomain(value);
+                setselectedskill("");
+                inputRef.current.value = "";
               }}
               sx={{ width: 400 }}
               disableClearable
@@ -205,6 +216,8 @@ const EditModal = ({
             />
 
             <TextField
+              ref={inputRef}
+              key={`skillName-${params?.id}`}
               id={`skillName-${params?.id}`}
               variant="outlined"
               value={selectedskill}
@@ -215,8 +228,8 @@ const EditModal = ({
               }}
               disabled={loading}
               label="Add Skills"
-              error={errorValues.skillsError.length > 0 && selectedskill !== ""}
-              helperText={selectedskill == "" ? "" : errorValues.skillsError}
+              error={errorValues.skillsError.length > 0}
+              helperText={errorValues.skillsError}
             />
           </div>
         </DialogContent>
