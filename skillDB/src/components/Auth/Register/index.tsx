@@ -32,7 +32,6 @@ function Register() {
       ...prevState,
       [name]: value,
     }));
-    console.log(registerForm);
   };
 
   const validateForm = (name: string, value: string) => {
@@ -91,24 +90,18 @@ function Register() {
   };
 
   const handleSubmit = (event: any) => {
-    console.log("Hello");
     event.preventDefault();
     setFormSubmit(true);
     setLoading(true);
     const response: any = axiosRequest
       .post("signup", registerForm)
-      .then((response) => {
-        if (response.status === 200) {
-          console.log(response);
-          //   localStorage.setItem("token", response.data.data.token);
-          setLoading(false);
+      .then(() => {
+        //   localStorage.setItem("token", response.data.data.token);
 
-          navigate("/auth/login");
-        } else {
-          setLoading(false);
-        }
-      });
-    console.log(registerForm);
+        navigate("/auth/login");
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
   };
 
   return (

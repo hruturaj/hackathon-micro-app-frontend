@@ -19,14 +19,14 @@ const UsersActions = ({ params, rowId, setRowId, setRows, setLoading }) => {
   const handleDelete = async () => {
     setDeleteLoading(true);
     axiosRequest
-      .delete(`/skill/${params.id}`, {
+      .delete(`/user-skill/${params?.row?.id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
         if (res?.status < 400) {
           setLoading(true);
           axiosRequest
-            .get("/skill", {
+            .get("/user-skill", {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
               },

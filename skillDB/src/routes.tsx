@@ -3,20 +3,12 @@ import { Route } from "./models/routes";
 
 const HomePage = React.lazy(() => import("./homePage"));
 const SkillList = React.lazy(() => import("./page/skillList"));
-const AboutPage = React.lazy(()=> import("app2/About"));
 import ErrorBoundary from "./errorBoundary";
-const ChooseSkills = React.lazy(() => import("./components/AddSkills"))
 const AddDomain = React.lazy(() => import("./components/AddDomain"));
+const ChooseSkill = React.lazy(() => import("app2/ChooseSkill"));
+const AddChooseSkill = React.lazy(() => import("app2/AddChooseSkill"));
 
 const routes: Array<Route> = [
-  // {
-  //   path: "/",
-  //   element: <HomePage redirectLink={"/skill/list"} />,
-  // },
-  {
-    path: '/about',
-    element:  <ErrorBoundary><AboutPage/></ErrorBoundary>
-  },
   {
     path: "/skill/list",
     element: <SkillList />,
@@ -27,15 +19,23 @@ const routes: Array<Route> = [
   },
   {
     path: "/skill/choose",
-    element: <ChooseSkills />,
+    element: (
+      <ErrorBoundary>
+        <ChooseSkill />
+      </ErrorBoundary>
+    ),
   },
   {
-    path: "/skill/report",
-    element: <>Skill Report From app 1</>,
+    path: "/skill/choose/new",
+    element: (
+      <ErrorBoundary>
+        <AddChooseSkill />
+      </ErrorBoundary>
+    ),
   },
   {
     path: "*",
-    element: <>Page Not Found</>,
+    element: <div style={{ textAlign: "center" }}>Page Not Found</div>,
   },
 ];
 

@@ -1,16 +1,16 @@
 import Autocomplete from "@mui/material/Autocomplete";
-import Chip from "@mui/material/Chip";
-import ListItem from "@mui/material/ListItem";
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import axiosRequest from "../../services/http.service";
 
-function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
-  //   const domainSet = [];
-  //   const skillSet = []
-  // const results = domainSet.filter(({ value: id1 }) => !allSelectedDomains.some(({ value: id2 }) => id2 === id1));
-  // console.log('difference---------------------',results)
-
+function AddDomainFields({
+  index,
+  updateFn,
+  domainSet,
+  allSelectedDomains,
+  setFormErrors,
+  setCurrentSkill,
+}) {
   const [selectedDomain, setselectedDomain] = useState<any>(null);
   const [selectedskills, setselectedskills] = useState<any>([]);
   const [skillName, setskillName] = useState<any>("");
@@ -20,56 +20,34 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
     skillsError: "",
   });
 
+  useEffect(() => {
+    setFormErrors(errorValues);
+  }, [errorValues]);
+
   // const [formData, setformData] = useState({initialState})
 
   useEffect(() => {
-    if (selectedDomain == null) {
+    if (selectedDomain === null || selectedskills.length === 0) {
       return;
     }
-    // console.log("working here******")
     let obj = {
       domain: { id: selectedDomain.id, name: selectedDomain.name },
       skills: selectedskills,
-      // .map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
     };
-    console.log("useeffect working******", selectedskills);
-    // console.log("******",obj,index)
     updateFn(obj, index);
-
-    console.log("&&&&&&&&&&&&&&&&&&&&&&", allSelectedDomains);
   }, [selectedDomain, selectedskills]);
 
-  // const filterSkillset = () => {
-  //   if(selectedDomain) {
-  //     const newskillarray = skillSet.filter((val: any) => {
-  //       return val.domainMasterId === selectedDomain.id
-  //     })
-  //     return newskillarray
-  //   } else {
-  //     return []
-  //   }
-  // }
-
   const handleChange = (event: any, value?: any, reason?: any) => {
-    //console.log("name==>",event.target.id,event.target.id.includes("domain-field"))
-    let obj = {};
-
-    console.log("values outside", value, reason);
     if (reason === "clear") {
       setselectedDomain({ id: -1, name: "" });
-    } else if (event.target.id.includes("domain-field")) {
-      console.log("values", event, value);
+    } else if (event?.target?.id?.includes("domain-field")) {
+      seterrorValues({
+        ...errorValues,
+        domainError: "",
+      });
       setselectedDomain(value);
-
-      // obj = {
-      //   domain: {id: value.id, name: value.name},
-      //   skills: selectedskills.map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
-      // }
     } else {
-      // obj = {
-      //   domain: {id: selectedDomain.id, name: selectedDomain.name},
-      //   skills: value.map(each=>{return {id: each.id, name: each.name, domainMasterId: each.domainMasterId}})
-      // }
+      setCurrentSkill(value);
       seterrorValues({
         ...errorValues,
         skillsError: "",
@@ -77,11 +55,10 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
 
       setskillName(event.target.value);
       if (event?.target?.value?.length > 0) {
-        console.log("inside iffff", event.target.value);
         axiosRequest
           .get(
             "skill/search/" +
-              selectedDomain.id +
+              selectedDomain?.id +
               "?search=" +
               event.target.value,
             {
@@ -91,62 +68,21 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
             }
           )
           .then((response: any) => {
-            if (response.data.data) {
-              console.log("pass", response.data.data);
+            if (response.data?.exist) {
               seterrorValues({
                 ...errorValues,
                 skillsError: "Skill exists",
               });
             } else {
-              console.log("fail", response.message);
               seterrorValues({
                 ...errorValues,
                 skillsError: "",
               });
+              setselectedskills(value);
             }
-            // skillSet.push(...response.data.data);
           });
       }
-      // axiosRequest('')
-      // autocomplete setskills
-      // setselectedskills(value)
     }
-
-    // console.log("object: ",obj)
-    // updateFn(obj,index)
-  };
-
-  // const handleAdd = () => {
-  //   const newList = selectedskills.concat({ name })
-  // }
-
-  const handleKeyDown = (event: any) => {
-    if (event.key === "Enter") {
-      console.log("do validate", event.target.value);
-      if (errorValues.skillsError == "") {
-        const newList = selectedskills.concat(event.target.value);
-        setselectedskills(newList);
-        setskillName("");
-      }
-    }
-  };
-
-  const handleDelete = (chipToDelete: any) => () => {
-    // setselectedskills((chips) =>
-    //   chips.filter((chip) => chip !== chipToDelete)
-    // );
-
-    const arr1 = [...selectedskills];
-    console.log(
-      "handle delete",
-      chipToDelete,
-      arr1,
-      selectedskills.indexOf(chipToDelete)
-    );
-    arr1.splice(selectedskills.indexOf(chipToDelete), 1);
-    console.log("after slice", arr1);
-
-    setselectedskills(arr1);
   };
 
   return (
@@ -155,6 +91,9 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
         display: "flex",
         justifyContent: "center",
         paddingBottom: "15px",
+        columnGap: 20,
+        rowGap: 20,
+        flexWrap: "wrap",
       }}
     >
       <Autocomplete
@@ -164,14 +103,12 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
         onChange={(e, v, reason) => {
           handleChange(e, v, reason);
         }}
-        sx={{ width: 400, marginRight: "25px" }}
+        sx={{ minWidth: 200, flex: 0.35 }}
         getOptionDisabled={(option: any) => {
-          // console.log(option);
           const valDomains = allSelectedDomains.map((val) => val.domain.name);
-          // console.log('disabled option',valDomains, valDomains.indexOf(option.name) !== -1, option.name)
           return valDomains.indexOf(option.name) !== -1;
-          // return allSelectedDomains.map(val => val.domain).filter(value => value.id !== option.id);
         }}
+        disableClearable
         getOptionLabel={(option: any) => option.name}
         renderInput={(params) => (
           <TextField
@@ -184,50 +121,6 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
         )}
       />
 
-      {/* <Autocomplete
-      id="skills-field"
-        disabled={selectedDomain === ''}
-        sx={{ width: 400 }}
-        multiple
-        onChange={(e,v) => {handleChange(e, v)}}
-        options={ filterSkillset()}
-        getOptionLabel={(option: any) => option.name}
-        renderInput={(params) => (
-          <TextField {...params} label="Skills" placeholder="Skills" />
-        )}
-      /> */}
-
-      {/* <div>
-        <TextField
-          id="outlined-basic"
-          sx={{ width: 400 }}
-          label="Skills"
-          onChange={handleChange}
-          variant="outlined"
-          onKeyDown={handleKeyDown}
-          value={skillName}
-          error={errorValues.skillsError.length > 0 && skillName !== ""}
-          helperText={skillName == "" ? "" : errorValues.skillsError}
-        />
-
-        <div>
-          {selectedskills.length > 0 &&
-            selectedskills.map((data) => {
-              let icon;
-
-              return (
-                <ListItem>
-                  <Chip
-                    icon={icon}
-                    label={data}
-                    onDelete={handleDelete(data)}
-                  />
-                </ListItem>
-              );
-            })}
-        </div>
-      </div> */}
-
       <Autocomplete
         multiple
         key={`skills-${index}`}
@@ -235,9 +128,8 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
         options={[]}
         freeSolo
         size="small"
-        sx={{ width: 400 }}
+        sx={{ minWidth: 200, flex: 0.35 }}
         onChange={(e, v, reason) => {
-          console.log("onchange", e, v, reason);
           handleChange(e, v, reason);
         }}
         // renderTags={(value: readonly string[], getTagProps) =>
@@ -252,8 +144,17 @@ function AddDomainFields({ index, updateFn, domainSet, allSelectedDomains }) {
         //   ))
         // }
         onKeyDown={(event: any) => {
+          if (selectedDomain === null) {
+            event.defaultMuiPrevented = selectedDomain === null;
+            seterrorValues({
+              ...errorValues,
+              domainError: "Please select Domain",
+            });
+            return;
+          }
           if (event.key === "Enter") {
             event.defaultMuiPrevented = errorValues.skillsError.length > 0;
+            return;
           }
         }}
         renderInput={(params) => (

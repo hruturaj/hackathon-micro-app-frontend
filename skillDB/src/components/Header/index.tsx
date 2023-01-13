@@ -31,9 +31,7 @@ const Header = ({ appName, ...props }) => {
       ]
     : [
         { name: "Home", route: "/skill/list" },
-        { name: "About", route: "/about" },
         { name: "Choose", route: "/skill/choose" },
-        { name: "Report", route: "/skill/report" },
         { name: "Logout", route: "/auth/login" },
       ];
 
@@ -109,7 +107,7 @@ const Header = ({ appName, ...props }) => {
                     key={item?.name}
                     sx={{ color: "#fff" }}
                     onClick={() => {
-                      localStorage.removeItem("token");
+                      localStorage.clear();
                       navigate("/auth/login");
                     }}
                   >
